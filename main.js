@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-
 const { runMigrations } = require('./src/database/db');
 const { registrarConfiguracoes } = require('./src/modules/configuracoes/configuracoes.ipc');
+const { registrarProdutos } = require('./src/modules/produtos/produtos.ipc');
 
 let janelaPrincipal;
 
@@ -19,9 +19,7 @@ function criarJanela() {
       nodeIntegration: false
     }
   });
-
   janelaPrincipal.loadFile(path.join(__dirname, 'src', 'ui', 'index.html'));
-
   janelaPrincipal.on('closed', () => {
     janelaPrincipal = null;
   });
@@ -30,7 +28,7 @@ function criarJanela() {
 app.whenReady().then(() => {
   runMigrations();
   registrarConfiguracoes();
-
+  registrarProdutos();
   criarJanela();
 
   app.on('activate', () => {

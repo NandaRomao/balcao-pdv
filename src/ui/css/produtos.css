@@ -1,0 +1,533 @@
+/* Cabeçalho do Módulo */
+.cabecalho-modulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--cor-borda);
+}
+
+.cabecalho-modulo .titulo-grupo h2 {
+  font-size: 1.5rem;
+  color: var(--cor-primaria);
+  margin-bottom: 0.25rem;
+}
+
+/* Barra de Ferramentas */
+.barra-ferramentas {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.campo-busca {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.campo-busca .icone-lupa {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1rem;
+}
+
+.campo-busca input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  font-size: 0.95rem;
+  background-color: var(--cor-branco);
+  transition: var(--transicao);
+}
+
+.campo-busca input:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 0 0 3px rgba(44, 62, 122, 0.1);
+}
+
+.filtros-categoria {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pill-categoria {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  background-color: var(--cor-branco);
+  color: var(--cor-texto);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+  white-space: nowrap;
+}
+
+.pill-categoria:hover {
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
+
+.pill-categoria.ativo {
+  background-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+  border-color: var(--cor-secundaria);
+}
+
+.pill-alerta {
+  border-color: var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+.pill-alerta.ativo {
+  background-color: var(--cor-erro);
+  color: var(--cor-branco);
+  border-color: var(--cor-erro);
+}
+
+.btn-limpar {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-limpar:hover {
+  border-color: var(--cor-texto);
+  color: var(--cor-texto);
+}
+
+.contador-produtos {
+  font-size: 0.85rem;
+  color: #888;
+  margin-left: auto;
+}
+
+/* Grid de Produtos */
+.grid-produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.card-produto {
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  padding: 1.25rem;
+  transition: var(--transicao);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-produto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.card-produto.alerta-estoque {
+  border-left: 4px solid var(--cor-erro);
+}
+
+.foto-produto {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background-color: var(--cor-fundo);
+}
+
+.foto-placeholder {
+  width: 100%;
+  height: 160px;
+  background-color: var(--cor-fundo);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-produto {
+  margin-bottom: 0.75rem;
+}
+
+.nome-produto {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cor-primaria);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.categoria-produto {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  background-color: rgba(44, 62, 122, 0.08);
+  color: var(--cor-secundaria);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+}
+
+.preco-produto {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cor-destaque);
+  margin-bottom: 0.5rem;
+}
+
+.estoque-produto {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.estoque-produto.alerta {
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
+.badge-alerta {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--cor-erro);
+  color: var(--cor-branco);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+
+.acoes-card {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-acao {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background-color: var(--cor-branco);
+  color: var(--cor-texto);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+  text-align: center;
+}
+
+.btn-acao:hover {
+  background-color: var(--cor-fundo);
+}
+
+.btn-acao.primario {
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
+
+.btn-acao.primario:hover {
+  background-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+}
+
+.btn-acao.perigo {
+  border-color: var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+.btn-acao.perigo:hover {
+  background-color: var(--cor-erro);
+  color: var(--cor-branco);
+}
+
+/* Estado Vazio */
+.estado-vazio {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #888;
+}
+
+.estado-vazio .icone {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.estado-vazio p {
+  font-size: 1rem;
+}
+
+/* Modal */
+.overlay-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.overlay-modal.aberto {
+  opacity: 1;
+  visibility: visible;
+}
+
+.container-modal {
+  background-color: var(--cor-branco);
+  border-radius: var(--raio-borda);
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.overlay-modal.aberto .container-modal {
+  transform: translateY(0);
+}
+
+.cabecalho-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.cabecalho-modal h3 {
+  font-size: 1.2rem;
+  color: var(--cor-primaria);
+}
+
+.btn-fechar {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transicao);
+}
+
+.btn-fechar:hover {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+.corpo-modal {
+  padding: 1.5rem;
+}
+
+.rodape-modal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+/* Formulário de Produto */
+.formulario-produto {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.linha-formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  font-size: 0.95rem;
+  background-color: var(--cor-branco);
+  transition: var(--transicao);
+  font-family: inherit;
+}
+
+.campo input[type="text"]:focus,
+.campo input[type="number"]:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 0 0 3px rgba(44, 62, 122, 0.1);
+}
+
+.campo-codigo-barras {
+  position: relative;
+}
+
+.campo-codigo-barras .icone-scanner {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1rem;
+}
+
+.campo-preco {
+  position: relative;
+}
+
+.campo-preco .prefixo {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.campo-preco input {
+  padding-left: 2.5rem;
+}
+
+.campo-foto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-foto {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+}
+
+.preview-foto-placeholder {
+  width: 120px;
+  height: 120px;
+  background-color: var(--cor-fundo);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 2rem;
+  border: 1px dashed var(--cor-borda);
+}
+
+.campo textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.campo select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+/* Modal Ajuste Estoque */
+.modal-ajuste .container-modal {
+  max-width: 400px;
+}
+
+.grupo-tipo-ajuste {
+  display: flex;
+  gap: 1rem;
+}
+
+.opcao-tipo {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.opcao-tipo:hover {
+  border-color: var(--cor-secundaria);
+}
+
+.opcao-tipo input {
+  display: none;
+}
+
+.opcao-tipo.selecionado {
+  border-color: var(--cor-secundaria);
+  background-color: rgba(44, 62, 122, 0.05);
+}
+
+.opcao-tipo .label-tipo {
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .linha-formulario {
+    grid-template-columns: 1fr;
+  }
+
+  .cabecalho-modulo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .barra-ferramentas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campo-busca {
+    min-width: auto;
+  }
+
+  .contador-produtos {
+    margin-left: 0;
+  }
+}
