@@ -20,6 +20,9 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 ### Personalização de Cores
 ![Color Picker](docs/screenshots/colo-picker.png)
 
+### Módulo de Produtos
+![Módulo de Produtos](docs/screenshots/produtos.png)
+
 ---
 
 ## Funcionalidades Previstas
@@ -41,8 +44,8 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 | Sprint | Descrição | Status |
 |--------|-----------|--------|
 | 1 | Fundação — Electron, SQLite, Configurações | ✅ Concluído |
-| 2 | Produtos e Estoque | 🔜 Próximo |
-| 3 | PDV — Venda Direta | ⏳ Aguardando |
+| 2 | Produtos e Estoque | ✅ Concluído |
+| 3 | PDV — Venda Direta | 🔜 Próximo |
 | 4 | Comandas | ⏳ Aguardando |
 | 5 | Fiscal e Pagamentos Avançados | ⏳ Aguardando |
 | 6 | Fiado e Clientes | ⏳ Aguardando |
@@ -76,21 +79,27 @@ balcao-pdv/
 │   ├── database/
 │   │   ├── db.js                    # Conexão SQLite
 │   │   └── migrations/
-│   │       └── 001-setup-inicial.sql
+│   │       ├── 001-setup-inicial.sql
+│   │       └── 002-criar-tabela-produtos.sql
 │   ├── modules/
-│   │   └── configuracoes/
-│   │       ├── configuracoes.handler.js
-│   │       └── configuracoes.ipc.js
+│   │   ├── configuracoes/
+│   │   │   ├── configuracoes.handler.js
+│   │   │   └── configuracoes.ipc.js
+│   │   └── produtos/
+│   │       ├── produtos.handler.js
+│   │       └── produtos.ipc.js
 │   └── ui/
 │       ├── index.html
 │       ├── css/
-│       │   └── main.css
+│       │   ├── main.css
+│       │   └── produtos.css
 │       └── js/
-│           └── configuracoes.js
+│           ├── navegacao.js
+│           ├── configuracoes.js
+│           └── produtos.js
 └── docs/
-    └── screenshots/
+└── screenshots/
 ```
-
 ---
 
 ## Como Rodar Localmente
