@@ -15,11 +15,10 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 ---
 
 ## Screenshots
-
 ![Tela de Configurações](docs/screenshots/configuracoes.png)
 
 ### Personalização de Cores
-![Color Picker](docs/screenshots/color-picker.png)
+![Color Picker](docs/screenshots/colo-picker.png)
 
 ---
 
