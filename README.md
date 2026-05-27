@@ -16,8 +16,7 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 
 ## Screenshots
 
-### Configurações do Sistema
-![Tela de Configurações](docs/screen)
+![Tela de Configurações](docs/screenshots/configuracoes.png)
 
 ### Personalização de Cores
 ![Color Picker](docs/screenshots/color-picker.png)
