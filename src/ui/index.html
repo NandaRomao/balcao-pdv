@@ -6,6 +6,7 @@
   <title>Balcão PDV</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/produtos.css">
+  <link rel="stylesheet" href="css/vendas.css">
 </head>
 <body>
   <header class="cabecalho">
@@ -24,7 +25,8 @@
   <div class="container-principal">
     <nav class="navegacao-lateral">
       <ul class="menu-modulos">
-        <li><a href="#" class="ativo" data-modulo="configuracoes">Configurações</a></li>
+        <li><a href="#" class="ativo" data-modulo="vendas">PDV</a></li>
+        <li><a href="#" data-modulo="configuracoes">Configurações</a></li>
         <li><a href="#" data-modulo="produtos">Produtos</a></li>
         <li><a href="#" data-modulo="comandas">Comandas</a></li>
         <li><a href="#" data-modulo="relatorios">Relatórios</a></li>
@@ -32,8 +34,81 @@
     </nav>
 
     <main class="area-conteudo">
+      <!-- Módulo Vendas (PDV) -->
+      <section id="modulo-vendas" class="modulo ativo">
+        <div class="container-pdv">
+          <div class="coluna-busca">
+            <div class="campo-busca-pdv">
+              <span class="icone-busca">🔍</span>
+              <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
+            </div>
+            <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
+            <div id="lista-resultados" class="resultados-busca"></div>
+          </div>
+
+          <div class="coluna-carrinho">
+            <div class="cabecalho-carrinho">
+              <h3>Venda Atual</h3>
+              <span id="contador-itens" class="contador-itens">0 itens</span>
+            </div>
+
+            <div id="lista-carrinho" class="lista-carrinho">
+              <div class="carrinho-vazio">
+                <div class="icone">🛒</div>
+                <p>Adicione produtos para iniciar a venda</p>
+              </div>
+            </div>
+
+            <div class="area-totais">
+              <div class="linha-total">
+                <span class="rotulo">Subtotal</span>
+                <span id="subtotal-venda" class="valor">R$ 0,00</span>
+              </div>
+              <div class="linha-total">
+                <span class="rotulo">Desconto</span>
+                <div class="campo-desconto">
+                  <span>R$</span>
+                  <input type="number" id="input-desconto" step="0.01" min="0" value="0">
+                </div>
+              </div>
+              <div class="linha-total destaque">
+                <span class="rotulo">TOTAL</span>
+                <span id="total-venda" class="valor">R$ 0,00</span>
+              </div>
+            </div>
+
+            <div class="area-pagamento">
+              <h4>Forma de Pagamento</h4>
+              <div class="botoes-pagamento">
+                <button class="btn-pagamento" data-forma="dinheiro">💵 Dinheiro</button>
+                <button class="btn-pagamento" data-forma="pix">📱 PIX</button>
+                <button class="btn-pagamento" data-forma="debito">💳 Débito</button>
+                <button class="btn-pagamento" data-forma="credito">💳 Crédito</button>
+              </div>
+              <div id="area-troco" class="area-troco hidden">
+                <div class="campo-troco">
+                  <label>Valor Pago</label>
+                  <input type="number" id="valor-pago" step="0.01" min="0" placeholder="0,00">
+                </div>
+                <div class="valor-troco">
+                  <span>Troco:</span>
+                  <span id="valor-troco">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="acoes-venda">
+              <button id="btn-finalizar" class="btn-finalizar" disabled>
+                Finalizar Venda (F9)
+              </button>
+              <button id="btn-cancelar" class="btn-cancelar">Cancelar Venda</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Módulo Configurações -->
-      <section id="modulo-configuracoes" class="modulo ativo">
+      <section id="modulo-configuracoes" class="modulo">
         <div class="cabecalho-modulo">
           <h2>Configurações do Sistema</h2>
           <p class="subtitulo">Personalize o Balcão PDV para o seu comércio</p>
@@ -242,11 +317,14 @@
           </div>
         </div>
       </div>
+
+      <span id="feedback-vendas" class="feedback hidden"></span>
     </main>
   </div>
 
   <script src="js/navegacao.js"></script>
   <script src="js/configuracoes.js"></script>
   <script src="js/produtos.js"></script>
+  <script src="js/vendas.js"></script>
 </body>
 </html>

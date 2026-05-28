@@ -3,7 +3,8 @@ const modulos = document.querySelectorAll('.modulo');
 
 const inicializadores = {
   configuracoes: null,
-  produtos: () => window.inicializarProdutos()
+  produtos: () => window.inicializarProdutos(),
+  vendas: () => window.inicializarVendas()
 };
 
 function ativarModulo(nomeModulo) {

@@ -15,6 +15,11 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 ---
 
 ## Screenshots
+
+### PDV — Venda Direta
+![PDV](docs/screenshots/pdv.png)
+
+### Configurações do Sistema
 ![Tela de Configurações](docs/screenshots/configuracoes.png)
 
 ### Personalização de Cores
@@ -45,8 +50,8 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 |--------|-----------|--------|
 | 1 | Fundação — Electron, SQLite, Configurações | ✅ Concluído |
 | 2 | Produtos e Estoque | ✅ Concluído |
-| 3 | PDV — Venda Direta | 🔜 Próximo |
-| 4 | Comandas | ⏳ Aguardando |
+| 3 | PDV — Venda Direta | ✅ Concluído |
+| 4 | Comandas | 🔜 Próximo |
 | 5 | Fiscal e Pagamentos Avançados | ⏳ Aguardando |
 | 6 | Fiado e Clientes | ⏳ Aguardando |
 | 7 | Relatórios | ⏳ Aguardando |
@@ -69,79 +74,3 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 ---
 
 ## Estrutura do Projeto
-
-```
-balcao-pdv/
-├── main.js                          # Inicialização do Electron
-├── preload.js                       # Ponte segura interface ↔ sistema
-├── package.json
-├── src/
-│   ├── database/
-│   │   ├── db.js                    # Conexão SQLite
-│   │   └── migrations/
-│   │       ├── 001-setup-inicial.sql
-│   │       └── 002-criar-tabela-produtos.sql
-│   ├── modules/
-│   │   ├── configuracoes/
-│   │   │   ├── configuracoes.handler.js
-│   │   │   └── configuracoes.ipc.js
-│   │   └── produtos/
-│   │       ├── produtos.handler.js
-│   │       └── produtos.ipc.js
-│   └── ui/
-│       ├── index.html
-│       ├── css/
-│       │   ├── main.css
-│       │   └── produtos.css
-│       └── js/
-│           ├── navegacao.js
-│           ├── configuracoes.js
-│           └── produtos.js
-└── docs/
-└── screenshots/
-```
----
-
-## Como Rodar Localmente
-
-**Pré-requisitos:** Node.js instalado.
-
-```bash
-# Clone o repositório
-git clone https://github.com/NandaRomao/balcao-pdv.git
-
-# Entre na pasta
-cd balcao-pdv
-
-# Instale as dependências
-npm install
-
-# Rode o sistema
-npm start
-```
-
----
-
-## Princípios do Projeto
-
-**Separação de responsabilidades** — cada arquivo faz uma coisa. A interface nunca acessa o banco diretamente.
-
-**Offline-first** — todas as operações principais funcionam sem internet.
-
-**Extensível** — arquitetura modular permite adicionar novos módulos sem quebrar o que já existe.
-
-**Acessível** — interface pensada para quem não tem familiaridade com tecnologia.
-
----
-
-## Sobre
-
-Desenvolvido por **Fernanda Romão**
-
-[![GitHub](https://img.shields.io/badge/GitHub-NandaRomao-181717?style=flat&logo=github)](https://github.com/NandaRomao)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-romaonanda-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/romaonanda/)
-[![Email](https://img.shields.io/badge/Email-fer.romao@gmail.com-EA4335?style=flat&logo=gmail)](mailto:fer.romao@gmail.com)
-
----
-
-*Balcão PDV — Mokshyaa Soluções*

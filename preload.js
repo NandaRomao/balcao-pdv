@@ -14,5 +14,13 @@ contextBridge.exposeInMainWorld('api', {
     ajustarEstoque: (id, quantidade, tipo) =>
       ipcRenderer.invoke('produtos:ajustar-estoque', id, quantidade, tipo),
     listarCategorias: () => ipcRenderer.invoke('produtos:listar-categorias')
+  },
+  vendas: {
+    buscarProdutoPorCodigo: (codigo) =>
+      ipcRenderer.invoke('vendas:buscar-produto-codigo', codigo),
+    buscarProdutos: (termo) =>
+      ipcRenderer.invoke('vendas:buscar-produtos', termo),
+    finalizar: (dadosVenda) =>
+      ipcRenderer.invoke('vendas:finalizar', dadosVenda)
   }
 });
