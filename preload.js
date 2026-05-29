@@ -22,5 +22,18 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.invoke('vendas:buscar-produtos', termo),
     finalizar: (dadosVenda) =>
       ipcRenderer.invoke('vendas:finalizar', dadosVenda)
+  },
+  comandas: {
+    listarAbertas: () => ipcRenderer.invoke('comandas:listar-abertas'),
+    criar: (dados) => ipcRenderer.invoke('comandas:criar', dados),
+    buscarDetalhe: (id) => ipcRenderer.invoke('comandas:buscar-detalhe', id),
+    adicionarItem: (comandaId, item) =>
+      ipcRenderer.invoke('comandas:adicionar-item', comandaId, item),
+    removerItem: (itemId) =>
+      ipcRenderer.invoke('comandas:remover-item', itemId),
+    fechar: (comandaId, dadosPagamento) =>
+      ipcRenderer.invoke('comandas:fechar', comandaId, dadosPagamento),
+    cancelar: (comandaId) =>
+      ipcRenderer.invoke('comandas:cancelar', comandaId)
   }
 });

@@ -1,0 +1,545 @@
+/* Ações do Header */
+.acoes-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Wrapper do Conteúdo Principal */
+.wrapper-conteudo {
+  transition: margin-left 0.3s ease;
+}
+
+.wrapper-conteudo.painel-aberto {
+  margin-left: 340px;
+}
+
+/* Botão Toggle no Header */
+.btn-comandas {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--raio-borda);
+  color: var(--cor-branco);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-comandas:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.badge-comandas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: var(--cor-destaque);
+  color: var(--cor-primaria);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 10px;
+}
+
+/* Painel de Comandas */
+.painel-comandas {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  bottom: 0;
+  width: 340px;
+  background-color: var(--cor-branco);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+}
+
+.painel-comandas.aberto {
+  transform: translateX(0);
+}
+
+.cabecalho-painel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.cabecalho-painel h3 {
+  font-size: 1.1rem;
+  color: var(--cor-primaria);
+}
+
+.btn-fechar-painel {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transicao);
+}
+
+.btn-fechar-painel:hover {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+/* Nova Comanda */
+.btn-nova-comanda {
+  margin: 1rem 1.25rem;
+  padding: 0.75rem;
+  background-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+  border: none;
+  border-radius: var(--raio-borda);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-nova-comanda:hover {
+  background-color: var(--cor-primaria);
+}
+
+.form-nova-comanda {
+  padding: 0 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.form-nova-comanda input {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  font-size: 0.9rem;
+}
+
+.form-nova-comanda input:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+}
+
+.acoes-form-comanda {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-mini-primario {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: var(--cor-destaque);
+  color: var(--cor-primaria);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-mini-primario:hover {
+  opacity: 0.9;
+}
+
+.btn-mini-secundario {
+  flex: 1;
+  padding: 0.5rem;
+  background: none;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-mini-secundario:hover {
+  border-color: var(--cor-texto);
+  color: var(--cor-texto);
+}
+
+/* Lista de Comandas */
+.secao-lista-comandas {
+  padding: 0 1.25rem;
+}
+
+.rotulo-secao {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 0.75rem;
+}
+
+.lista-comandas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item-comanda {
+  padding: 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  cursor: pointer;
+  transition: var(--transicao);
+  background-color: var(--cor-branco);
+}
+
+.item-comanda:hover {
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.item-comanda.selecionado {
+  border-color: var(--cor-destaque);
+  background-color: rgba(232, 184, 75, 0.05);
+  box-shadow: 0 2px 8px rgba(232, 184, 75, 0.15);
+}
+
+.cabecalho-item-comanda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.nome-item-comanda {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--cor-primaria);
+}
+
+.total-item-comanda {
+  font-weight: 700;
+  color: var(--cor-destaque);
+  font-size: 0.9rem;
+}
+
+.meta-item-comanda {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Detalhe da Comanda */
+.detalhe-comanda {
+  padding: 1rem 1.25rem;
+  border-top: 2px solid var(--cor-borda);
+  animation: fadeIn 0.2s ease;
+}
+
+.cabecalho-detalhe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.titulo-comanda {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--cor-primaria);
+}
+
+.btn-cancelar-comanda {
+  padding: 0.375rem 0.625rem;
+  background: none;
+  border: 1px solid var(--cor-erro);
+  border-radius: 6px;
+  color: var(--cor-erro);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-cancelar-comanda:hover {
+  background-color: var(--cor-erro);
+  color: var(--cor-branco);
+}
+
+/* Busca de Produto na Comanda */
+.busca-comanda {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.busca-comanda input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  font-size: 0.9rem;
+}
+
+.busca-comanda input:focus {
+  outline: none;
+  border-color: var(--cor-secundaria);
+}
+
+.resultados-comanda {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.resultado-comanda-item {
+  padding: 0.625rem 0.875rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 0.85rem;
+  transition: var(--transicao);
+}
+
+.resultado-comanda-item:last-child {
+  border-bottom: none;
+}
+
+.resultado-comanda-item:hover {
+  background-color: var(--cor-fundo);
+}
+
+/* Itens da Comanda */
+.itens-comanda {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+}
+
+.item-comanda-detalhe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 0.85rem;
+}
+
+.item-comanda-detalhe:last-child {
+  border-bottom: none;
+}
+
+.info-item-comanda-detalhe {
+  flex: 1;
+  min-width: 0;
+}
+
+.nome-item-comanda-detalhe {
+  font-weight: 600;
+  color: var(--cor-primaria);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hora-item-comanda {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.valor-item-comanda-detalhe {
+  text-align: right;
+  margin-right: 0.5rem;
+}
+
+.btn-remover-item-comanda {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transicao);
+  flex-shrink: 0;
+}
+
+.btn-remover-item-comanda:hover {
+  color: var(--cor-erro);
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Total da Comanda */
+.total-comanda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-top: 2px solid var(--cor-borda);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+}
+
+#total-comanda-valor {
+  color: var(--cor-destaque);
+  font-size: 1.2rem;
+}
+
+/* Botão Fechar Comanda */
+.btn-fechar-comanda {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--cor-destaque);
+  color: var(--cor-primaria);
+  border: none;
+  border-radius: var(--raio-borda);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transicao);
+  margin-top: 0.5rem;
+}
+
+.btn-fechar-comanda:hover {
+  opacity: 0.9;
+}
+
+/* Pagamento da Comanda */
+.pagamento-comanda {
+  padding-top: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.botoes-pagamento-comanda {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.btn-pag-comanda {
+  padding: 0.625rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  background-color: var(--cor-branco);
+  color: var(--cor-texto);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-pag-comanda:hover {
+  border-color: var(--cor-secundaria);
+}
+
+.btn-pag-comanda.selecionado {
+  border-color: var(--cor-destaque);
+  background-color: rgba(232, 184, 75, 0.1);
+  font-weight: 600;
+}
+
+.campo-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.campo-mini label {
+  font-size: 0.8rem;
+  color: #666;
+  min-width: 100px;
+}
+
+.campo-mini input {
+  flex: 1;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.troco-comanda {
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cor-sucesso);
+}
+
+.acoes-pagamento-comanda {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Feedback */
+.feedback-comanda {
+  position: sticky;
+  bottom: 0;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.feedback-comanda.sucesso {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--cor-sucesso);
+}
+
+.feedback-comanda.erro {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--cor-erro);
+}
+
+/* Estado Vazio */
+.estado-vazio-comandas {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #888;
+}
+
+.estado-vazio-comandas .icone {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .painel-comandas {
+    width: 100%;
+    top: 60px;
+  }
+
+  .wrapper-conteudo.painel-aberto {
+    margin-left: 0;
+  }
+
+  .btn-comandas {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8rem;
+  }
+}

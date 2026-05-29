@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/produtos.css">
   <link rel="stylesheet" href="css/vendas.css">
+  <link rel="stylesheet" href="css/comandas.css">
 </head>
 <body>
   <header class="cabecalho">
@@ -15,316 +16,384 @@
       <span class="logo-placeholder">Balcão PDV</span>
     </div>
     <h1 id="nome-comercio-display" class="nome-comercio">Mokshyaa Soluções</h1>
-    <button id="btn-menu" class="btn-hamburguer" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="acoes-header">
+      <button id="btn-toggle-comandas" class="btn-comandas">
+        Comandas <span id="badge-comandas" class="badge-comandas hidden">0</span>
+      </button>
+      <button id="btn-menu" class="btn-hamburguer" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </header>
 
-  <div class="container-principal">
-    <nav class="navegacao-lateral">
-      <ul class="menu-modulos">
-        <li><a href="#" class="ativo" data-modulo="vendas">PDV</a></li>
-        <li><a href="#" data-modulo="configuracoes">Configurações</a></li>
-        <li><a href="#" data-modulo="produtos">Produtos</a></li>
-        <li><a href="#" data-modulo="comandas">Comandas</a></li>
-        <li><a href="#" data-modulo="relatorios">Relatórios</a></li>
-      </ul>
-    </nav>
+  <aside id="painel-comandas" class="painel-comandas">
+    <div class="cabecalho-painel">
+      <h3>Comandas</h3>
+      <button id="btn-fechar-painel" class="btn-fechar-painel">&times;</button>
+    </div>
+    <button id="btn-nova-comanda" class="btn-nova-comanda">+ Nova Comanda</button>
+    <div class="form-nova-comanda hidden" id="form-nova-comanda">
+      <input type="text" id="input-nome-cliente" placeholder="Nome do cliente">
+      <input type="text" id="input-mesa" placeholder="Mesa (opcional)">
+      <div class="acoes-form-comanda">
+        <button id="btn-confirmar-comanda" class="btn-mini-primario">Criar</button>
+        <button id="btn-cancelar-form-comanda" class="btn-mini-secundario">Cancelar</button>
+      </div>
+    </div>
+    <div class="secao-lista-comandas">
+      <span class="rotulo-secao">Comandas Abertas</span>
+      <div id="lista-comandas" class="lista-comandas"></div>
+    </div>
+    <div id="detalhe-comanda" class="detalhe-comanda hidden">
+      <div class="cabecalho-detalhe">
+        <span id="titulo-comanda" class="titulo-comanda"></span>
+        <button id="btn-cancelar-comanda" class="btn-cancelar-comanda">Cancelar comanda</button>
+      </div>
+      <div class="busca-comanda">
+        <input type="text" id="busca-produto-comanda" placeholder="Adicionar produto..." autocomplete="off">
+        <div id="resultados-comanda" class="resultados-comanda"></div>
+      </div>
+      <div id="itens-comanda" class="itens-comanda"></div>
+      <div class="total-comanda">
+        <span>Total</span>
+        <span id="total-comanda-valor">R$ 0,00</span>
+      </div>
+      <button id="btn-fechar-comanda" class="btn-fechar-comanda">Fechar Comanda</button>
+      <div id="pagamento-comanda" class="pagamento-comanda hidden">
+        <span class="rotulo-secao">Forma de Pagamento</span>
+        <div class="botoes-pagamento-comanda">
+          <button class="btn-pag-comanda" data-forma="dinheiro">Dinheiro</button>
+          <button class="btn-pag-comanda" data-forma="pix">PIX</button>
+          <button class="btn-pag-comanda" data-forma="debito">Débito</button>
+          <button class="btn-pag-comanda" data-forma="credito">Crédito</button>
+        </div>
+        <div class="campo-mini">
+          <label>Desconto R$</label>
+          <input type="number" id="desconto-comanda" step="0.01" min="0" value="0">
+        </div>
+        <div id="area-pago-comanda" class="campo-mini hidden">
+          <label>Valor Pago R$</label>
+          <input type="number" id="valor-pago-comanda" step="0.01" min="0">
+        </div>
+        <div id="troco-comanda" class="troco-comanda hidden">
+          Troco: <span id="troco-comanda-valor">R$ 0,00</span>
+        </div>
+        <div class="acoes-pagamento-comanda">
+          <button id="btn-confirmar-pagamento" class="btn-mini-primario">Confirmar Pagamento</button>
+          <button id="btn-voltar-pagamento" class="btn-mini-secundario">Voltar</button>
+        </div>
+      </div>
+    </div>
+    <div id="feedback-comanda" class="feedback-comanda hidden"></div>
+  </aside>
 
-    <main class="area-conteudo">
-      <!-- Módulo Vendas (PDV) -->
-      <section id="modulo-vendas" class="modulo ativo">
-        <div class="container-pdv">
-          <div class="coluna-busca">
-            <div class="campo-busca-pdv">
-              <span class="icone-busca">🔍</span>
-              <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
+  <div id="wrapper-conteudo" class="wrapper-conteudo">
+    <div class="container-principal">
+      <nav class="navegacao-lateral">
+        <ul class="menu-modulos">
+          <li><a href="#" class="ativo" data-modulo="vendas">PDV</a></li>
+          <li><a href="#" data-modulo="configuracoes">Configurações</a></li>
+          <li><a href="#" data-modulo="produtos">Produtos</a></li>
+          <li><a href="#" data-modulo="relatorios">Relatórios</a></li>
+        </ul>
+      </nav>
+
+      <main class="area-conteudo">
+        <!-- Módulo Vendas (PDV) -->
+        <section id="modulo-vendas" class="modulo ativo">
+          <div class="container-pdv">
+            <div class="coluna-busca">
+              <div class="campo-busca-pdv">
+                <span class="icone-busca">🔍</span>
+                <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
+              </div>
+              <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
+              <div id="lista-resultados" class="resultados-busca"></div>
             </div>
-            <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
-            <div id="lista-resultados" class="resultados-busca"></div>
+
+            <div class="coluna-carrinho">
+              <div class="cabecalho-carrinho">
+                <h3>Venda Atual</h3>
+                <span id="contador-itens" class="contador-itens">0 itens</span>
+              </div>
+
+              <div id="lista-carrinho" class="lista-carrinho">
+                <div class="carrinho-vazio">
+                  <div class="icone">🛒</div>
+                  <p>Adicione produtos para iniciar a venda</p>
+                </div>
+              </div>
+
+              <div class="area-totais">
+                <div class="linha-total">
+                  <span class="rotulo">Subtotal</span>
+                  <span id="subtotal-venda" class="valor">R$ 0,00</span>
+                </div>
+                <div class="linha-total">
+                  <span class="rotulo">Desconto</span>
+                  <div class="campo-desconto">
+                    <span>R$</span>
+                    <input type="number" id="input-desconto" step="0.01" min="0" value="0">
+                  </div>
+                </div>
+                <div class="linha-total destaque">
+                  <span class="rotulo">TOTAL</span>
+                  <span id="total-venda" class="valor">R$ 0,00</span>
+                </div>
+              </div>
+
+              <div class="area-pagamento">
+                <h4>Forma de Pagamento</h4>
+                <div class="botoes-pagamento">
+                  <button class="btn-pagamento" data-forma="dinheiro">💵 Dinheiro</button>
+                  <button class="btn-pagamento" data-forma="pix">📱 PIX</button>
+                  <button class="btn-pagamento" data-forma="debito">💳 Débito</button>
+                  <button class="btn-pagamento" data-forma="credito">💳 Crédito</button>
+                </div>
+                <div id="area-troco" class="area-troco hidden">
+                  <div class="campo-troco">
+                    <label>Valor Pago</label>
+                    <input type="number" id="valor-pago" step="0.01" min="0" placeholder="0,00">
+                  </div>
+                  <div class="valor-troco">
+                    <span>Troco:</span>
+                    <span id="valor-troco">R$ 0,00</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="acoes-venda">
+                <button id="btn-finalizar" class="btn-finalizar" disabled>
+                  Finalizar Venda (F9)
+                </button>
+                <button id="btn-cancelar" class="btn-cancelar">Cancelar Venda</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Módulo Configurações -->
+        <section id="modulo-configuracoes" class="modulo">
+          <div class="cabecalho-modulo">
+            <h2>Configurações do Sistema</h2>
+            <p class="subtitulo">Personalize o Balcão PDV para o seu comércio</p>
           </div>
 
-          <div class="coluna-carrinho">
-            <div class="cabecalho-carrinho">
-              <h3>Venda Atual</h3>
-              <span id="contador-itens" class="contador-itens">0 itens</span>
-            </div>
+          <form id="form-configuracoes" class="formulario-configuracoes">
+            <div class="grupo-campos">
+              <div class="campo">
+                <label for="nome-comercio">Nome do Comércio</label>
+                <input type="text" id="nome-comercio" name="nome_comercio" required>
+              </div>
 
-            <div id="lista-carrinho" class="lista-carrinho">
-              <div class="carrinho-vazio">
-                <div class="icone">🛒</div>
-                <p>Adicione produtos para iniciar a venda</p>
-              </div>
-            </div>
-
-            <div class="area-totais">
-              <div class="linha-total">
-                <span class="rotulo">Subtotal</span>
-                <span id="subtotal-venda" class="valor">R$ 0,00</span>
-              </div>
-              <div class="linha-total">
-                <span class="rotulo">Desconto</span>
-                <div class="campo-desconto">
-                  <span>R$</span>
-                  <input type="number" id="input-desconto" step="0.01" min="0" value="0">
-                </div>
-              </div>
-              <div class="linha-total destaque">
-                <span class="rotulo">TOTAL</span>
-                <span id="total-venda" class="valor">R$ 0,00</span>
+              <div class="campo">
+                <label for="cnpj">CNPJ</label>
+                <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18">
               </div>
             </div>
 
-            <div class="area-pagamento">
-              <h4>Forma de Pagamento</h4>
-              <div class="botoes-pagamento">
-                <button class="btn-pagamento" data-forma="dinheiro">💵 Dinheiro</button>
-                <button class="btn-pagamento" data-forma="pix">📱 PIX</button>
-                <button class="btn-pagamento" data-forma="debito">💳 Débito</button>
-                <button class="btn-pagamento" data-forma="credito">💳 Crédito</button>
+            <div class="campo">
+              <label for="endereco">Endereço</label>
+              <input type="text" id="endereco" name="endereco">
+            </div>
+
+            <div class="campo campo-logo">
+              <label for="logo">Logo do Comércio</label>
+              <input type="file" id="logo" name="logo" accept="image/*">
+              <span class="hint">Selecione uma imagem para o logo</span>
+            </div>
+
+            <div class="grupo-cores">
+              <div class="campo campo-cor">
+                <label for="cor-primaria">Cor Primária</label>
+                <input type="color" id="cor-primaria" name="cor_primaria" value="#1a1a2e">
               </div>
-              <div id="area-troco" class="area-troco hidden">
-                <div class="campo-troco">
-                  <label>Valor Pago</label>
-                  <input type="number" id="valor-pago" step="0.01" min="0" placeholder="0,00">
-                </div>
-                <div class="valor-troco">
-                  <span>Troco:</span>
-                  <span id="valor-troco">R$ 0,00</span>
-                </div>
+
+              <div class="campo campo-cor">
+                <label for="cor-secundaria">Cor Secundária</label>
+                <input type="color" id="cor-secundaria" name="cor_secundaria" value="#2c3e7a">
+              </div>
+
+              <div class="campo campo-cor">
+                <label for="cor-destaque">Cor de Destaque</label>
+                <input type="color" id="cor-destaque" name="cor_destaque" value="#e8b84b">
               </div>
             </div>
 
-            <div class="acoes-venda">
-              <button id="btn-finalizar" class="btn-finalizar" disabled>
-                Finalizar Venda (F9)
+            <div class="campo">
+              <label for="chave-licenca">Chave de Licença</label>
+              <input type="text" id="chave-licenca" name="chave_licenca">
+            </div>
+
+            <div class="acoes-formulario">
+              <button type="submit" id="btn-salvar" class="btn-primario">
+                <span class="texto-btn">Salvar Configurações</span>
+                <span class="spinner hidden"></span>
               </button>
-              <button id="btn-cancelar" class="btn-cancelar">Cancelar Venda</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Módulo Configurações -->
-      <section id="modulo-configuracoes" class="modulo">
-        <div class="cabecalho-modulo">
-          <h2>Configurações do Sistema</h2>
-          <p class="subtitulo">Personalize o Balcão PDV para o seu comércio</p>
-        </div>
-
-        <form id="form-configuracoes" class="formulario-configuracoes">
-          <div class="grupo-campos">
-            <div class="campo">
-              <label for="nome-comercio">Nome do Comércio</label>
-              <input type="text" id="nome-comercio" name="nome_comercio" required>
-            </div>
-
-            <div class="campo">
-              <label for="cnpj">CNPJ</label>
-              <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18">
-            </div>
-          </div>
-
-          <div class="campo">
-            <label for="endereco">Endereço</label>
-            <input type="text" id="endereco" name="endereco">
-          </div>
-
-          <div class="campo campo-logo">
-            <label for="logo">Logo do Comércio</label>
-            <input type="file" id="logo" name="logo" accept="image/*">
-            <span class="hint">Selecione uma imagem para o logo</span>
-          </div>
-
-          <div class="grupo-cores">
-            <div class="campo campo-cor">
-              <label for="cor-primaria">Cor Primária</label>
-              <input type="color" id="cor-primaria" name="cor_primaria" value="#1a1a2e">
-            </div>
-
-            <div class="campo campo-cor">
-              <label for="cor-secundaria">Cor Secundária</label>
-              <input type="color" id="cor-secundaria" name="cor_secundaria" value="#2c3e7a">
-            </div>
-
-            <div class="campo campo-cor">
-              <label for="cor-destaque">Cor de Destaque</label>
-              <input type="color" id="cor-destaque" name="cor_destaque" value="#e8b84b">
-            </div>
-          </div>
-
-          <div class="campo">
-            <label for="chave-licenca">Chave de Licença</label>
-            <input type="text" id="chave-licenca" name="chave_licenca">
-          </div>
-
-          <div class="acoes-formulario">
-            <button type="submit" id="btn-salvar" class="btn-primario">
-              <span class="texto-btn">Salvar Configurações</span>
-              <span class="spinner hidden"></span>
-            </button>
-            <span id="feedback" class="feedback hidden"></span>
-          </div>
-        </form>
-      </section>
-
-      <!-- Módulo Produtos -->
-      <section id="modulo-produtos" class="modulo">
-        <div class="cabecalho-modulo">
-          <div class="titulo-grupo">
-            <h2>Produtos</h2>
-            <p class="subtitulo">Gerencie o catálogo do seu comércio</p>
-          </div>
-          <button id="btn-novo-produto" class="btn-primario">+ Novo Produto</button>
-        </div>
-
-        <div class="barra-ferramentas">
-          <div class="campo-busca">
-            <span class="icone-lupa">🔍</span>
-            <input type="text" id="busca-produtos" placeholder="Buscar por nome ou código de barras...">
-          </div>
-          <div id="filtros-categoria" class="filtros-categoria"></div>
-          <button id="btn-limpar-filtros" class="btn-limpar">Limpar</button>
-          <span id="contador-produtos" class="contador-produtos">0 produtos</span>
-        </div>
-
-        <div id="grid-produtos" class="grid-produtos">
-          <div class="estado-vazio">
-            <div class="icone">📦</div>
-            <p>Carregando produtos...</p>
-          </div>
-        </div>
-
-        <span id="feedback-produtos" class="feedback hidden"></span>
-      </section>
-
-      <!-- Modal Produto -->
-      <div id="overlay-modal-produto" class="overlay-modal">
-        <div class="container-modal">
-          <div class="cabecalho-modal">
-            <h3 id="titulo-modal-produto">Novo Produto</h3>
-            <button id="btn-fechar-modal" class="btn-fechar">&times;</button>
-          </div>
-          <form id="form-produto" class="corpo-modal formulario-produto">
-            <div class="linha-formulario">
-              <div class="campo campo-codigo-barras">
-                <label for="codigo-barras">Código de Barras</label>
-                <input type="text" id="codigo-barras" name="codigo_barras" placeholder="0000000000000">
-                <span class="icone-scanner">📠</span>
-              </div>
-              <div class="campo">
-                <label for="nome-produto">Nome do Produto *</label>
-                <input type="text" id="nome-produto" name="nome" required>
-              </div>
-            </div>
-
-            <div class="campo">
-              <label for="descricao-produto">Descrição</label>
-              <textarea id="descricao-produto" name="descricao"></textarea>
-            </div>
-
-            <div class="linha-formulario">
-              <div class="campo campo-preco">
-                <label for="preco-venda">Preço de Venda *</label>
-                <span class="prefixo">R$</span>
-                <input type="number" id="preco-venda" name="preco_venda" step="0.01" min="0" required>
-              </div>
-              <div class="campo campo-preco">
-                <label for="preco-custo">Preço de Custo</label>
-                <span class="prefixo">R$</span>
-                <input type="number" id="preco-custo" name="preco_custo" step="0.01" min="0">
-              </div>
-            </div>
-
-            <div class="linha-formulario">
-              <div class="campo">
-                <label for="unidade">Unidade</label>
-                <select id="unidade" name="unidade">
-                  <option value="unidade">Unidade</option>
-                  <option value="kg">Quilograma (kg)</option>
-                  <option value="g">Grama (g)</option>
-                  <option value="litro">Litro (L)</option>
-                  <option value="ml">Mililitro (ml)</option>
-                  <option value="metro">Metro (m)</option>
-                  <option value="cm">Centímetro (cm)</option>
-                  <option value="caixa">Caixa</option>
-                  <option value="pacote">Pacote</option>
-                  <option value="par">Par</option>
-                </select>
-              </div>
-              <div class="campo">
-                <label for="categoria-produto">Categoria</label>
-                <input type="text" id="categoria-produto" name="categoria" placeholder="Ex: Bebidas">
-              </div>
-            </div>
-
-            <div class="linha-formulario">
-              <div class="campo">
-                <label for="estoque-atual">Estoque Atual</label>
-                <input type="number" id="estoque-atual" name="estoque_atual" step="0.01" min="0" value="0">
-              </div>
-              <div class="campo">
-                <label for="estoque-minimo">Estoque Mínimo</label>
-                <input type="number" id="estoque-minimo" name="estoque_minimo" step="0.01" min="0" value="0">
-              </div>
-            </div>
-
-            <div class="campo campo-foto">
-              <label for="foto-produto">Foto do Produto</label>
-              <img id="preview-foto-produto" src="" alt="" class="preview-foto hidden">
-              <div id="preview-foto-placeholder" class="preview-foto-placeholder">📷</div>
-              <input type="file" id="foto-produto" name="foto" accept="image/*">
+              <span id="feedback" class="feedback hidden"></span>
             </div>
           </form>
-          <div class="rodape-modal">
-            <button type="button" id="btn-cancelar-modal" class="btn-acao">Cancelar</button>
-            <button type="submit" form="form-produto" id="btn-salvar-produto" class="btn-primario">Salvar</button>
-          </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- Modal Ajuste Estoque -->
-      <div id="overlay-modal-ajuste" class="overlay-modal modal-ajuste">
-        <div class="container-modal">
-          <div class="cabecalho-modal">
-            <h3>Ajustar Estoque</h3>
-            <button id="btn-fechar-ajuste" class="btn-fechar">&times;</button>
-          </div>
-          <form id="form-ajuste" class="corpo-modal formulario-produto">
-            <div class="campo">
-              <label>Quantidade</label>
-              <input type="number" id="quantidade-ajuste" name="quantidade" step="0.01" min="0.01" required>
+        <!-- Módulo Produtos -->
+        <section id="modulo-produtos" class="modulo">
+          <div class="cabecalho-modulo">
+            <div class="titulo-grupo">
+              <h2>Produtos</h2>
+              <p class="subtitulo">Gerencie o catálogo do seu comércio</p>
             </div>
-            <div class="campo">
-              <label>Tipo de Ajuste</label>
-              <div class="grupo-tipo-ajuste">
-                <label class="opcao-tipo">
-                  <input type="radio" name="tipo-ajuste" value="entrada">
-                  <span class="label-tipo">📥 Entrada</span>
-                </label>
-                <label class="opcao-tipo">
-                  <input type="radio" name="tipo-ajuste" value="saida">
-                  <span class="label-tipo">📤 Saída</span>
-                </label>
+            <button id="btn-novo-produto" class="btn-primario">+ Novo Produto</button>
+          </div>
+
+          <div class="barra-ferramentas">
+            <div class="campo-busca">
+              <span class="icone-lupa">🔍</span>
+              <input type="text" id="busca-produtos" placeholder="Buscar por nome ou código de barras...">
+            </div>
+            <div id="filtros-categoria" class="filtros-categoria"></div>
+            <button id="btn-limpar-filtros" class="btn-limpar">Limpar</button>
+            <span id="contador-produtos" class="contador-produtos">0 produtos</span>
+          </div>
+
+          <div id="grid-produtos" class="grid-produtos">
+            <div class="estado-vazio">
+              <div class="icone">📦</div>
+              <p>Carregando produtos...</p>
+            </div>
+          </div>
+
+          <span id="feedback-produtos" class="feedback hidden"></span>
+        </section>
+
+        <!-- Modal Produto -->
+        <div id="overlay-modal-produto" class="overlay-modal">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3 id="titulo-modal-produto">Novo Produto</h3>
+              <button id="btn-fechar-modal" class="btn-fechar">&times;</button>
+            </div>
+            <form id="form-produto" class="corpo-modal formulario-produto">
+              <div class="linha-formulario">
+                <div class="campo campo-codigo-barras">
+                  <label for="codigo-barras">Código de Barras</label>
+                  <input type="text" id="codigo-barras" name="codigo_barras" placeholder="0000000000000">
+                  <span class="icone-scanner">📠</span>
+                </div>
+                <div class="campo">
+                  <label for="nome-produto">Nome do Produto *</label>
+                  <input type="text" id="nome-produto" name="nome" required>
+                </div>
               </div>
+
+              <div class="campo">
+                <label for="descricao-produto">Descrição</label>
+                <textarea id="descricao-produto" name="descricao"></textarea>
+              </div>
+
+              <div class="linha-formulario">
+                <div class="campo campo-preco">
+                  <label for="preco-venda">Preço de Venda *</label>
+                  <span class="prefixo">R$</span>
+                  <input type="number" id="preco-venda" name="preco_venda" step="0.01" min="0" required>
+                </div>
+                <div class="campo campo-preco">
+                  <label for="preco-custo">Preço de Custo</label>
+                  <span class="prefixo">R$</span>
+                  <input type="number" id="preco-custo" name="preco_custo" step="0.01" min="0">
+                </div>
+              </div>
+
+              <div class="linha-formulario">
+                <div class="campo">
+                  <label for="unidade">Unidade</label>
+                  <select id="unidade" name="unidade">
+                    <option value="unidade">Unidade</option>
+                    <option value="kg">Quilograma (kg)</option>
+                    <option value="g">Grama (g)</option>
+                    <option value="litro">Litro (L)</option>
+                    <option value="ml">Mililitro (ml)</option>
+                    <option value="metro">Metro (m)</option>
+                    <option value="cm">Centímetro (cm)</option>
+                    <option value="caixa">Caixa</option>
+                    <option value="pacote">Pacote</option>
+                    <option value="par">Par</option>
+                  </select>
+                </div>
+                <div class="campo">
+                  <label for="categoria-produto">Categoria</label>
+                  <input type="text" id="categoria-produto" name="categoria" placeholder="Ex: Bebidas">
+                </div>
+              </div>
+
+              <div class="linha-formulario">
+                <div class="campo">
+                  <label for="estoque-atual">Estoque Atual</label>
+                  <input type="number" id="estoque-atual" name="estoque_atual" step="0.01" min="0" value="0">
+                </div>
+                <div class="campo">
+                  <label for="estoque-minimo">Estoque Mínimo</label>
+                  <input type="number" id="estoque-minimo" name="estoque_minimo" step="0.01" min="0" value="0">
+                </div>
+              </div>
+
+              <div class="campo campo-foto">
+                <label for="foto-produto">Foto do Produto</label>
+                <img id="preview-foto-produto" src="" alt="" class="preview-foto hidden">
+                <div id="preview-foto-placeholder" class="preview-foto-placeholder">📷</div>
+                <input type="file" id="foto-produto" name="foto" accept="image/*">
+              </div>
+            </form>
+            <div class="rodape-modal">
+              <button type="button" id="btn-cancelar-modal" class="btn-acao">Cancelar</button>
+              <button type="submit" form="form-produto" id="btn-salvar-produto" class="btn-primario">Salvar</button>
             </div>
-          </form>
-          <div class="rodape-modal">
-            <button type="button" id="btn-cancelar-ajuste" class="btn-acao">Cancelar</button>
-            <button type="submit" form="form-ajuste" id="btn-confirmar-ajuste" class="btn-primario">Confirmar</button>
           </div>
         </div>
-      </div>
 
-      <span id="feedback-vendas" class="feedback hidden"></span>
-    </main>
+        <!-- Modal Ajuste Estoque -->
+        <div id="overlay-modal-ajuste" class="overlay-modal modal-ajuste">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3>Ajustar Estoque</h3>
+              <button id="btn-fechar-ajuste" class="btn-fechar">&times;</button>
+            </div>
+            <form id="form-ajuste" class="corpo-modal formulario-produto">
+              <div class="campo">
+                <label>Quantidade</label>
+                <input type="number" id="quantidade-ajuste" name="quantidade" step="0.01" min="0.01" required>
+              </div>
+              <div class="campo">
+                <label>Tipo de Ajuste</label>
+                <div class="grupo-tipo-ajuste">
+                  <label class="opcao-tipo">
+                    <input type="radio" name="tipo-ajuste" value="entrada">
+                    <span class="label-tipo">📥 Entrada</span>
+                  </label>
+                  <label class="opcao-tipo">
+                    <input type="radio" name="tipo-ajuste" value="saida">
+                    <span class="label-tipo">📤 Saída</span>
+                  </label>
+                </div>
+              </div>
+            </form>
+            <div class="rodape-modal">
+              <button type="button" id="btn-cancelar-ajuste" class="btn-acao">Cancelar</button>
+              <button type="submit" form="form-ajuste" id="btn-confirmar-ajuste" class="btn-primario">Confirmar</button>
+            </div>
+          </div>
+        </div>
+
+        <span id="feedback-vendas" class="feedback hidden"></span>
+      </main>
+    </div>
   </div>
 
   <script src="js/navegacao.js"></script>
   <script src="js/configuracoes.js"></script>
   <script src="js/produtos.js"></script>
   <script src="js/vendas.js"></script>
+  <script src="js/comandas.js"></script>
 </body>
 </html>

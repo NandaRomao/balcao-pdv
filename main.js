@@ -4,6 +4,7 @@ const { runMigrations } = require('./src/database/db');
 const { registrarConfiguracoes } = require('./src/modules/configuracoes/configuracoes.ipc');
 const { registrarProdutos } = require('./src/modules/produtos/produtos.ipc');
 const { registrarVendas } = require('./src/modules/vendas/vendas.ipc');
+const { registrarComandas } = require('./src/modules/comandas/comandas.ipc');
 
 let janelaPrincipal;
 
@@ -31,6 +32,7 @@ app.whenReady().then(() => {
   registrarConfiguracoes();
   registrarProdutos();
   registrarVendas();
+  registrarComandas();
   criarJanela();
 
   app.on('activate', () => {

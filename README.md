@@ -16,6 +16,10 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 
 ## Screenshots
 
+
+### PDV — Comandas
+![PDV](docs/screenshots/comandas.png)
+
 ### PDV — Venda Direta
 ![PDV](docs/screenshots/pdv.png)
 
@@ -51,8 +55,8 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 | 1 | Fundação — Electron, SQLite, Configurações | ✅ Concluído |
 | 2 | Produtos e Estoque | ✅ Concluído |
 | 3 | PDV — Venda Direta | ✅ Concluído |
-| 4 | Comandas | 🔜 Próximo |
-| 5 | Fiscal e Pagamentos Avançados | ⏳ Aguardando |
+| 4 | Comandas | ✅ Concluído |
+| 5 | Fiscal e Pagamentos Avançados | 🔜 Próximo |
 | 6 | Fiado e Clientes | ⏳ Aguardando |
 | 7 | Relatórios | ⏳ Aguardando |
 | 8 | Sincronização e Licenciamento | ⏳ Aguardando |
