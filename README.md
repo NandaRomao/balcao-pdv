@@ -80,7 +80,7 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
  
 ## Estrutura do Projeto
  
-\`\`\`
+```
 balcao-pdv/
 ├── main.js                          # Inicialização do Electron
 ├── preload.js                       # Ponte segura interface ↔ sistema
@@ -106,7 +106,7 @@ balcao-pdv/
 │       └── js/
 └── docs/
     └── screenshots/
-\`\`\`
+```
  
 ---
  
@@ -114,7 +114,7 @@ balcao-pdv/
  
 **Pré-requisitos:** Node.js instalado.
  
-\`\`\`bash
+```bash
 # Clone o repositório
 git clone https://github.com/NandaRomao/balcao-pdv.git
  
@@ -129,7 +129,7 @@ npm run rebuild
  
 # Rode o sistema
 npm start
-\`\`\`
+```
  
 ---
  
