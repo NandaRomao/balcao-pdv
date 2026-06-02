@@ -35,5 +35,18 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.invoke('comandas:fechar', comandaId, dadosPagamento),
     cancelar: (comandaId) =>
       ipcRenderer.invoke('comandas:cancelar', comandaId)
+  },
+  fiado: {
+    listarClientes: (filtros) => ipcRenderer.invoke('fiado:listar-clientes', filtros),
+    criarCliente: (dados) => ipcRenderer.invoke('fiado:criar-cliente', dados),
+    buscarCliente: (id) => ipcRenderer.invoke('fiado:buscar-cliente', id),
+    atualizarCliente: (id, dados) => ipcRenderer.invoke('fiado:atualizar-cliente', id, dados),
+    desativarCliente: (id) => ipcRenderer.invoke('fiado:desativar-cliente', id),
+    buscarExtrato: (clienteId) => ipcRenderer.invoke('fiado:buscar-extrato', clienteId),
+    lancarDebitoProduto: (clienteId, item) => ipcRenderer.invoke('fiado:lancar-debito-produto', clienteId, item),
+    lancarDebitoAvulso: (clienteId, dados) => ipcRenderer.invoke('fiado:lancar-debito-avulso', clienteId, dados),
+    registrarPagamento: (clienteId, valor) => ipcRenderer.invoke('fiado:registrar-pagamento', clienteId, valor),
+    removerLancamento: (lancamentoId) => ipcRenderer.invoke('fiado:remover-lancamento', lancamentoId),
+    verificarLimite: (clienteId, valorAdicional) => ipcRenderer.invoke('fiado:verificar-limite', clienteId, valorAdicional)
   }
 });

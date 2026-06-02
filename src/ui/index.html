@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/produtos.css">
   <link rel="stylesheet" href="css/vendas.css">
   <link rel="stylesheet" href="css/comandas.css">
+  <link rel="stylesheet" href="css/fiado.css">
 </head>
 <body>
   <header class="cabecalho">
@@ -96,6 +97,8 @@
           <li><a href="#" class="ativo" data-modulo="vendas">PDV</a></li>
           <li><a href="#" data-modulo="configuracoes">Configurações</a></li>
           <li><a href="#" data-modulo="produtos">Produtos</a></li>
+          <li><a href="#" data-modulo="clientes">Clientes</a></li>
+          <li><a href="#" data-modulo="comandas">Comandas</a></li>
           <li><a href="#" data-modulo="relatorios">Relatórios</a></li>
         </ul>
       </nav>
@@ -267,6 +270,144 @@
           <span id="feedback-produtos" class="feedback hidden"></span>
         </section>
 
+        <!-- Módulo Clientes & Fiado -->
+        <section id="modulo-clientes" class="modulo">
+          <div class="cabecalho-modulo">
+            <div class="titulo-grupo">
+              <h2>Clientes & Fiado</h2>
+              <p class="subtitulo">Gerencie clientes e contas em aberto</p>
+            </div>
+            <button id="btn-novo-cliente" class="btn-primario">+ Novo Cliente</button>
+          </div>
+
+          <div class="barra-ferramentas">
+            <div class="campo-busca">
+              <span class="icone-lupa">🔍</span>
+              <input type="text" id="busca-clientes" placeholder="Buscar por nome ou telefone...">
+            </div>
+            <button id="filtro-devedores" class="pill-categoria">Somente devedores</button>
+            <span id="contador-clientes" class="contador-produtos">0 clientes</span>
+          </div>
+
+          <div id="grid-clientes" class="grid-clientes"></div>
+          <span id="feedback-clientes" class="feedback hidden"></span>
+        </section>
+
+        <!-- Modal Cliente -->
+        <div id="overlay-modal-cliente" class="overlay-modal">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3 id="titulo-modal-cliente">Novo Cliente</h3>
+              <button id="btn-fechar-modal-cliente" class="btn-fechar">&times;</button>
+            </div>
+            <form id="form-cliente" class="corpo-modal formulario-produto">
+              <div class="campo">
+                <label for="nome-cliente">Nome *</label>
+                <input type="text" id="nome-cliente" name="nome" required>
+              </div>
+              <div class="campo">
+                <label for="telefone-cliente">Telefone</label>
+                <input type="text" id="telefone-cliente" name="telefone" placeholder="(00) 00000-0000">
+              </div>
+              <div class="campo">
+                <label for="limite-credito">Limite de Crédito R$</label>
+                <input type="number" id="limite-credito" name="limite_credito" step="0.01" min="0" value="0">
+              </div>
+              <div class="campo">
+                <label for="observacao-cliente">Observação</label>
+                <textarea id="observacao-cliente" name="observacao"></textarea>
+              </div>
+              <div class="campo campo-foto">
+                <label for="foto-cliente">Foto</label>
+                <img id="preview-foto-cliente" src="" alt="" class="preview-foto hidden">
+                <div id="preview-foto-cliente-placeholder" class="preview-foto-placeholder">📷</div>
+                <input type="file" id="foto-cliente" name="foto" accept="image/*">
+              </div>
+            </form>
+            <div class="rodape-modal">
+              <button type="button" id="btn-cancelar-cliente" class="btn-acao">Cancelar</button>
+              <button type="submit" form="form-cliente" id="btn-salvar-cliente" class="btn-primario">Salvar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Extrato -->
+        <div id="overlay-modal-extrato" class="overlay-modal">
+          <div class="container-modal modal-extrato">
+            <div class="cabecalho-modal">
+              <h3 id="titulo-modal-extrato">Extrato</h3>
+              <button id="btn-fechar-extrato" class="btn-fechar">&times;</button>
+            </div>
+            <div class="corpo-modal">
+              <div class="saldo-extrato">
+                <span class="rotulo-saldo">Saldo Devedor</span>
+                <span id="saldo-extrato-valor" class="valor-saldo">R$ 0,00</span>
+              </div>
+              <div id="limite-extrato" class="limite-extrato hidden">
+                <span>Limite:</span>
+                <span id="limite-extrato-valor"></span>
+              </div>
+              <div class="acoes-extrato">
+                <button id="btn-lancar-fiado" class="btn-acao primario">Lançar Fiado</button>
+                <button id="btn-registrar-pagamento" class="btn-acao">Registrar Pagamento</button>
+              </div>
+
+              <div id="area-lancamento" class="area-lancamento hidden">
+                <div class="toggle-modo">
+                  <button id="btn-modo-produto" class="btn-toggle ativo">Produto</button>
+                  <button id="btn-modo-avulso" class="btn-toggle">Avulso</button>
+                </div>
+                <div id="lancamento-produto" class="lancamento-produto">
+                  <div class="busca-comanda">
+                    <input type="text" id="busca-produto-fiado" placeholder="Buscar produto..." autocomplete="off">
+                    <div id="resultados-fiado" class="resultados-comanda"></div>
+                  </div>
+                  <div class="campo">
+                    <label>Quantidade</label>
+                    <input type="number" id="quantidade-fiado" step="0.01" min="0.01" value="1">
+                  </div>
+                </div>
+                <div id="lancamento-avulso" class="lancamento-avulso hidden">
+                  <div class="campo">
+                    <label>Descrição</label>
+                    <input type="text" id="descricao-avulso" placeholder="Ex: Churrasqueiro 3h">
+                  </div>
+                  <div class="campo">
+                    <label>Valor R$</label>
+                    <input type="number" id="valor-avulso" step="0.01" min="0.01">
+                  </div>
+                  <div class="campo campo-checkbox">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="contabiliza-receita" checked>
+                      <span>Contabilizar como receita</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="acoes-lancamento">
+                  <button id="btn-confirmar-lancamento" class="btn-mini-primario">Confirmar Lançamento</button>
+                  <button id="btn-cancelar-lancamento" class="btn-mini-secundario">Cancelar</button>
+                </div>
+              </div>
+
+              <div id="area-pagamento" class="area-pagamento hidden">
+                <div class="campo">
+                  <label>Valor do Pagamento R$</label>
+                  <input type="number" id="valor-pagamento" step="0.01" min="0.01">
+                </div>
+                <div class="acoes-pagamento">
+                  <button id="btn-confirmar-pagamento-extrato" class="btn-mini-primario">Confirmar Pagamento</button>
+                  <button id="btn-cancelar-pagamento-extrato" class="btn-mini-secundario">Cancelar</button>
+                </div>
+              </div>
+
+              <div class="secao-extrato">
+                <span class="rotulo-secao">Histórico</span>
+                <div id="lista-extrato" class="lista-extrato"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Modal Produto -->
         <div id="overlay-modal-produto" class="overlay-modal">
           <div class="container-modal">
@@ -395,5 +536,6 @@
   <script src="js/produtos.js"></script>
   <script src="js/vendas.js"></script>
   <script src="js/comandas.js"></script>
+  <script src="js/fiado.js"></script>
 </body>
 </html>
