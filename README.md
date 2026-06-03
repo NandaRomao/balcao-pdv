@@ -36,6 +36,9 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 
 ![Fiado Pato Rouco](docs/screenshots/cliente-pato-rouco.png)
 
+### Relatórios e Reposição
+![Relatórios](docs/screenshots/relatorios.png)
+
 ---
 
 ## Funcionalidades
@@ -44,7 +47,7 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 - **Comandas** — consumo progressivo para atendimento presencial, com painel lateral e registro de horário por item
 - **Estoque** — controle de entrada, saída, ajustes e alertas de mínimo
 - **Clientes & Fiado** — cadastro de clientes, débito por produto ou avulso, pagamento parcial e extrato com histórico
-- **Relatórios** — histórico por período e forma de pagamento *(em desenvolvimento)*
+- **Relatórios e Reposição** — resumo do período, vendas por forma de pagamento, produtos mais vendidos, lista de reposição de estoque (acabou/acabando) e resumo do fiado, com filtro de período e impressão seletiva
 - **Fiscal** — emissão de NFC-e via API homologada *(planejado)*
 - **Pagamentos** — dinheiro, PIX, débito, crédito, Stone, Cielo, PagSeguro, Sicoob *(integração planejada)*
 - **Personalização** — logo, nome e paleta de cores por estabelecimento
@@ -61,8 +64,8 @@ Este sistema resolve isso com uma solução simples, acessível e que funciona *
 | 3 | PDV — Venda Direta | ✅ Concluído |
 | 4 | Comandas | ✅ Concluído |
 | 6 | Clientes e Fiado | ✅ Concluído |
+| 7 | Relatórios e Reposição | ✅ Concluído |
 | 5 | Fiscal e Pagamentos Avançados | ⏳ Aguardando (depende de CNPJ/certificado) |
-| 7 | Relatórios | 🔜 Próximo |
 | 8 | Sincronização e Licenciamento | ⏳ Aguardando |
 | 9 | Polish e Empacotamento | ⏳ Aguardando |
 
@@ -103,7 +106,8 @@ balcao-pdv/
 │   │   ├── produtos/
 │   │   ├── vendas/
 │   │   ├── comandas/
-│   │   └── fiado/
+│   │   ├── fiado/
+│   │   └── relatorios/
 │   └── ui/
 │       ├── index.html
 │       ├── css/
@@ -146,6 +150,8 @@ npm start
 **Transações atômicas** — operações que envolvem múltiplas tabelas (fechar venda, fechar comanda, lançar fiado de produto) usam transações para garantir consistência: ou tudo acontece, ou nada acontece.
 
 **Saldo calculado, não armazenado** — o saldo devedor do fiado é sempre recalculado a partir dos lançamentos, garantindo que extrato e saldo nunca fiquem dessincronizados.
+
+**Relatórios sobre os dados existentes** — o módulo de relatórios apenas lê e agrega os dados já registrados (vendas, fiado, estoque), sem duplicar informação. As datas são convertidas de UTC para o horário local na consulta.
 
 **Extensível** — arquitetura modular permite adicionar novos módulos sem quebrar o que já existe.
 
