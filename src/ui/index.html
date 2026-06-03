@@ -113,6 +113,7 @@
                 <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
               </div>
               <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
+              <button id="btn-item-avulso" class="btn-item-avulso">+ Item Avulso</button>
               <div id="lista-resultados" class="resultados-busca"></div>
             </div>
 
@@ -404,6 +405,36 @@
                 <span class="rotulo-secao">Histórico</span>
                 <div id="lista-extrato" class="lista-extrato"></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Item Avulso (PDV) -->
+        <div id="overlay-modal-avulso" class="overlay-modal">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3>Item Avulso</h3>
+              <button id="btn-fechar-avulso-pdv" class="btn-fechar">&times;</button>
+            </div>
+            <div class="corpo-modal formulario-produto">
+              <div class="campo">
+                <label for="descricao-avulso-pdv">Descrição *</label>
+                <input type="text" id="descricao-avulso-pdv" placeholder="Ex: Carne 1,2kg, Serviço, Consignado">
+              </div>
+              <div class="linha-formulario">
+                <div class="campo campo-preco">
+                  <label for="valor-avulso-pdv">Valor unitário R$ *</label>
+                  <input type="number" id="valor-avulso-pdv" step="0.01" min="0.01" placeholder="0,00">
+                </div>
+                <div class="campo">
+                  <label for="quantidade-avulso-pdv">Quantidade</label>
+                  <input type="number" id="quantidade-avulso-pdv" step="0.01" min="0.01" value="1">
+                </div>
+              </div>
+            </div>
+            <div class="rodape-modal">
+              <button type="button" id="btn-cancelar-avulso-pdv" class="btn-acao">Cancelar</button>
+              <button type="button" id="btn-confirmar-avulso-pdv" class="btn-primario">Adicionar ao Carrinho</button>
             </div>
           </div>
         </div>

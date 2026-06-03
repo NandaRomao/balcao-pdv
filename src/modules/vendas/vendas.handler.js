@@ -53,6 +53,8 @@ function finalizarVenda(dadosVenda) {
 
   const transacao = db.transaction(() => {
     for (const item of dadosVenda.itens) {
+      if (!item.produto_id) continue;
+
       const produto = verificarEstoque.get(item.produto_id);
       if (!produto) {
         throw new Error(`Produto ID ${item.produto_id} não encontrado`);
@@ -82,7 +84,10 @@ function finalizarVenda(dadosVenda) {
         item.quantidade,
         item.subtotal
       );
-      atualizarEstoque.run(item.quantidade, item.produto_id);
+
+     if (item.produto_id) {
+        atualizarEstoque.run(item.quantidade, item.produto_id);
+      }
     }
 
     return vendaId;

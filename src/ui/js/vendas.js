@@ -2,6 +2,7 @@
   let carrinho = [];
   let formaPagamento = '';
   let desconto = 0;
+  let contadorIdCarrinho = 0;
 
   const inputBuscaPdv = document.getElementById('busca-pdv');
   const listaResultados = document.getElementById('lista-resultados');
@@ -17,6 +18,15 @@
   const btnFinalizar = document.getElementById('btn-finalizar');
   const btnCancelar = document.getElementById('btn-cancelar');
   const feedbackVendas = document.getElementById('feedback-vendas');
+
+  const btnItemAvulso = document.getElementById('btn-item-avulso');
+  const overlayModalAvulso = document.getElementById('overlay-modal-avulso');
+  const descricaoAvulso = document.getElementById('descricao-avulso-pdv');
+  const valorAvulsoPdv = document.getElementById('valor-avulso-pdv');
+  const quantidadeAvulso = document.getElementById('quantidade-avulso-pdv');
+  const btnConfirmarAvulso = document.getElementById('btn-confirmar-avulso-pdv');
+  const btnCancelarAvulso = document.getElementById('btn-cancelar-avulso-pdv');
+  const btnFecharAvulso = document.getElementById('btn-fechar-avulso-pdv');
 
   function formatarMoeda(valor) {
     return new Intl.NumberFormat('pt-BR', {
@@ -110,7 +120,7 @@
   }
 
   function adicionarAoCarrinho(produto) {
-    const existente = carrinho.find(item => item.produto_id === produto.id);
+    const existente = carrinho.find(item => item.produto_id === produto.id && item.produto_id !== null);
 
     if (existente) {
       if (existente.quantidade >= produto.estoque_atual) {
@@ -124,13 +134,16 @@
         mostrarFeedback(`Estoque insuficiente para "${produto.nome}"`, 'erro');
         return;
       }
+      contadorIdCarrinho += 1;
       carrinho.push({
+        id_carrinho: contadorIdCarrinho,
         produto_id: produto.id,
         nome_produto: produto.nome,
         preco_unitario: produto.preco_venda,
         quantidade: 1,
         subtotal: produto.preco_venda,
-        estoque_disponivel: produto.estoque_atual
+        estoque_disponivel: produto.estoque_atual,
+        avulso: false
       });
     }
 
@@ -139,18 +152,35 @@
     limparBusca();
   }
 
-  function alterarQuantidade(produtoId, delta) {
-    const item = carrinho.find(i => i.produto_id === produtoId);
+  function adicionarItemAvulso(descricao, valor, quantidade) {
+    contadorIdCarrinho += 1;
+    carrinho.push({
+      id_carrinho: contadorIdCarrinho,
+      produto_id: null,
+      nome_produto: descricao,
+      preco_unitario: valor,
+      quantidade: quantidade,
+      subtotal: valor * quantidade,
+      estoque_disponivel: Infinity,
+      avulso: true
+    });
+
+    renderizarCarrinho();
+    calcularTotais();
+  }
+
+  function alterarQuantidade(idCarrinho, delta) {
+    const item = carrinho.find(i => i.id_carrinho === idCarrinho);
     if (!item) return;
 
     const novaQuantidade = item.quantidade + delta;
 
     if (novaQuantidade < 1) {
-      removerDoCarrinho(produtoId);
+      removerDoCarrinho(idCarrinho);
       return;
     }
 
-    if (novaQuantidade > item.estoque_disponivel) {
+    if (!item.avulso && novaQuantidade > item.estoque_disponivel) {
       mostrarFeedback(`Estoque máximo: ${item.estoque_disponivel}`, 'erro');
       return;
     }
@@ -162,8 +192,8 @@
     calcularTotais();
   }
 
-  function removerDoCarrinho(produtoId) {
-    carrinho = carrinho.filter(item => item.produto_id !== produtoId);
+  function removerDoCarrinho(idCarrinho) {
+    carrinho = carrinho.filter(item => item.id_carrinho !== idCarrinho);
     renderizarCarrinho();
     calcularTotais();
   }
@@ -186,14 +216,14 @@
           <div class="nome-item-carrinho">${item.nome_produto}</div>
           <div class="preco-item-carrinho">${formatarMoeda(item.preco_unitario)} / un</div>
           <div class="controles-quantidade">
-            <button class="btn-quantidade" onclick="window.alterarQuantidadeVenda(${item.produto_id}, -1)">−</button>
+            <button class="btn-quantidade" onclick="window.alterarQuantidadeVenda(${item.id_carrinho}, -1)">−</button>
             <span class="valor-quantidade">${item.quantidade}</span>
-            <button class="btn-quantidade" onclick="window.alterarQuantidadeVenda(${item.produto_id}, 1)">+</button>
+            <button class="btn-quantidade" onclick="window.alterarQuantidadeVenda(${item.id_carrinho}, 1)">+</button>
           </div>
         </div>
         <div class="subtotal-item">
           <div class="valor-subtotal">${formatarMoeda(item.subtotal)}</div>
-          <button class="btn-remover-item" onclick="window.removerDoCarrinhoVenda(${item.produto_id})">✕</button>
+          <button class="btn-remover-item" onclick="window.removerDoCarrinhoVenda(${item.id_carrinho})">✕</button>
         </div>
       </div>
     `).join('');
@@ -328,6 +358,40 @@
     limparVenda();
   }
 
+  function abrirModalAvulso() {
+    descricaoAvulso.value = '';
+    valorAvulsoPdv.value = '';
+    quantidadeAvulso.value = '1';
+    overlayModalAvulso.classList.add('aberto');
+    descricaoAvulso.focus();
+  }
+
+  function fecharModalAvulso() {
+    overlayModalAvulso.classList.remove('aberto');
+  }
+
+  function confirmarAvulso() {
+    const descricao = descricaoAvulso.value.trim();
+    const valor = parseFloat(valorAvulsoPdv.value);
+    const quantidade = parseFloat(quantidadeAvulso.value) || 1;
+
+    if (!descricao) {
+      mostrarFeedback('Informe a descrição do item', 'erro');
+      return;
+    }
+    if (!valor || valor <= 0) {
+      mostrarFeedback('Informe um valor válido', 'erro');
+      return;
+    }
+    if (quantidade <= 0) {
+      mostrarFeedback('Quantidade inválida', 'erro');
+      return;
+    }
+
+    adicionarItemAvulso(descricao, valor, quantidade);
+    fecharModalAvulso();
+  }
+
   function registrarAtalhos(evento) {
     if (evento.key === 'F9' && !btnFinalizar.disabled) {
       evento.preventDefault();
@@ -357,6 +421,14 @@
 
     btnFinalizar.addEventListener('click', finalizarVenda);
     btnCancelar.addEventListener('click', cancelarVenda);
+
+    btnItemAvulso.addEventListener('click', abrirModalAvulso);
+    btnConfirmarAvulso.addEventListener('click', confirmarAvulso);
+    btnCancelarAvulso.addEventListener('click', fecharModalAvulso);
+    btnFecharAvulso.addEventListener('click', fecharModalAvulso);
+    overlayModalAvulso.addEventListener('click', (evento) => {
+      if (evento.target === overlayModalAvulso) fecharModalAvulso();
+    });
 
     document.addEventListener('keydown', registrarAtalhos);
   }

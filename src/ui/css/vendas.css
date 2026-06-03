@@ -525,3 +525,23 @@
     max-height: 50vh;
   }
 }
+
+/* Botão Item Avulso */
+.btn-item-avulso {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.625rem;
+  background: none;
+  border: 1px dashed var(--cor-borda);
+  border-radius: var(--raio-borda);
+  color: #888;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-item-avulso:hover {
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
