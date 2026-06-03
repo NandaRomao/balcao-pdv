@@ -48,5 +48,12 @@ contextBridge.exposeInMainWorld('api', {
     registrarPagamento: (clienteId, valor) => ipcRenderer.invoke('fiado:registrar-pagamento', clienteId, valor),
     removerLancamento: (lancamentoId) => ipcRenderer.invoke('fiado:remover-lancamento', lancamentoId),
     verificarLimite: (clienteId, valorAdicional) => ipcRenderer.invoke('fiado:verificar-limite', clienteId, valorAdicional)
+  },
+  relatorios: {
+    resumoPeriodo: (periodo) => ipcRenderer.invoke('relatorios:resumo-periodo', periodo),
+    vendasPorFormaPagamento: (periodo) => ipcRenderer.invoke('relatorios:vendas-forma-pagamento', periodo),
+    produtosMaisVendidos: (periodo) => ipcRenderer.invoke('relatorios:produtos-mais-vendidos', periodo),
+    reposicaoEstoque: () => ipcRenderer.invoke('relatorios:reposicao-estoque'),
+    resumoFiado: (periodo) => ipcRenderer.invoke('relatorios:resumo-fiado', periodo)
   }
 });

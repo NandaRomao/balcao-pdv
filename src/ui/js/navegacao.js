@@ -5,7 +5,8 @@ const inicializadores = {
   configuracoes: null,
   produtos: () => window.inicializarProdutos(),
   vendas: () => window.inicializarVendas(),
-  clientes: () => window.inicializarClientes()
+  clientes: () => window.inicializarClientes(),
+  relatorios: () => window.inicializarRelatorios()
 };
 
 function ativarModulo(nomeModulo) {

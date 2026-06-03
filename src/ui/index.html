@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/vendas.css">
   <link rel="stylesheet" href="css/comandas.css">
   <link rel="stylesheet" href="css/fiado.css">
+  <link rel="stylesheet" href="css/relatorios.css">
 </head>
 <body>
   <header class="cabecalho">
@@ -113,7 +114,6 @@
                 <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
               </div>
               <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
-              <button id="btn-item-avulso" class="btn-item-avulso">+ Item Avulso</button>
               <div id="lista-resultados" class="resultados-busca"></div>
             </div>
 
@@ -294,6 +294,109 @@
           <span id="feedback-clientes" class="feedback hidden"></span>
         </section>
 
+        <!-- Módulo Relatórios -->
+        <section id="modulo-relatorios" class="modulo">
+          <div class="cabecalho-modulo">
+            <div class="titulo-grupo">
+              <h2>Relatórios</h2>
+              <p class="subtitulo">Acompanhe vendas, estoque e fiado</p>
+            </div>
+            <button id="btn-imprimir-relatorio" class="btn-primario">Imprimir Selecionados</button>
+          </div>
+
+          <div class="barra-periodo">
+            <div class="botoes-periodo">
+              <button class="btn-periodo ativo" data-periodo="hoje">Hoje</button>
+              <button class="btn-periodo" data-periodo="7dias">7 dias</button>
+              <button class="btn-periodo" data-periodo="mes">Este mês</button>
+              <button class="btn-periodo" data-periodo="personalizado">Personalizado</button>
+            </div>
+            <div id="periodo-personalizado" class="periodo-personalizado hidden">
+              <label>De <input type="date" id="data-inicio"></label>
+              <label>Até <input type="date" id="data-fim"></label>
+              <button id="btn-aplicar-periodo" class="btn-mini-primario">Aplicar</button>
+            </div>
+          </div>
+
+          <div id="area-relatorios" class="area-relatorios">
+            <div class="titulo-impressao hidden-print">Relatório Balcão PDV</div>
+            <div class="periodo-impressao hidden-print"></div>
+
+            <div class="bloco-relatorio" data-bloco="resumo">
+              <div class="cabecalho-bloco">
+                <label class="checkbox-imprimir">
+                  <input type="checkbox" class="check-bloco" data-bloco="resumo" checked>
+                  <h3>Resumo do Período</h3>
+                </label>
+              </div>
+              <div class="cartoes-resumo">
+                <div class="cartao-resumo">
+                  <span class="rotulo-cartao">Total Vendido</span>
+                  <span id="resumo-total" class="valor-cartao">R$ 0,00</span>
+                </div>
+                <div class="cartao-resumo">
+                  <span class="rotulo-cartao">Nº de Vendas</span>
+                  <span id="resumo-numero" class="valor-cartao">0</span>
+                </div>
+                <div class="cartao-resumo">
+                  <span class="rotulo-cartao">Ticket Médio</span>
+                  <span id="resumo-ticket" class="valor-cartao">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bloco-relatorio" data-bloco="pagamento">
+              <div class="cabecalho-bloco">
+                <label class="checkbox-imprimir">
+                  <input type="checkbox" class="check-bloco" data-bloco="pagamento" checked>
+                  <h3>Vendas por Forma de Pagamento</h3>
+                </label>
+              </div>
+              <div id="lista-formas-pagamento" class="lista-relatorio"></div>
+            </div>
+
+            <div class="bloco-relatorio" data-bloco="produtos">
+              <div class="cabecalho-bloco">
+                <label class="checkbox-imprimir">
+                  <input type="checkbox" class="check-bloco" data-bloco="produtos" checked>
+                  <h3>Produtos Mais Vendidos</h3>
+                </label>
+              </div>
+              <div id="lista-produtos-vendidos" class="lista-relatorio"></div>
+            </div>
+
+            <div class="bloco-relatorio" data-bloco="reposicao">
+              <div class="cabecalho-bloco">
+                <label class="checkbox-imprimir">
+                  <input type="checkbox" class="check-bloco" data-bloco="reposicao" checked>
+                  <h3>Reposição de Estoque</h3>
+                </label>
+              </div>
+              <div class="subtitulo-bloco">Produtos que acabaram ou estão acabando</div>
+              <div id="lista-reposicao" class="lista-reposicao"></div>
+            </div>
+
+            <div class="bloco-relatorio" data-bloco="fiado">
+              <div class="cabecalho-bloco">
+                <label class="checkbox-imprimir">
+                  <input type="checkbox" class="check-bloco" data-bloco="fiado" checked>
+                  <h3>Resumo do Fiado</h3>
+                </label>
+              </div>
+              <div class="cartoes-resumo">
+                <div class="cartao-resumo">
+                  <span class="rotulo-cartao">Total a Receber</span>
+                  <span id="fiado-receber" class="valor-cartao">R$ 0,00</span>
+                </div>
+                <div class="cartao-resumo">
+                  <span class="rotulo-cartao">Recebido no Período</span>
+                  <span id="fiado-recebido" class="valor-cartao">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Modal Cliente -->
         <div id="overlay-modal-cliente" class="overlay-modal">
           <div class="container-modal">
@@ -405,36 +508,6 @@
                 <span class="rotulo-secao">Histórico</span>
                 <div id="lista-extrato" class="lista-extrato"></div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Item Avulso (PDV) -->
-        <div id="overlay-modal-avulso" class="overlay-modal">
-          <div class="container-modal">
-            <div class="cabecalho-modal">
-              <h3>Item Avulso</h3>
-              <button id="btn-fechar-avulso-pdv" class="btn-fechar">&times;</button>
-            </div>
-            <div class="corpo-modal formulario-produto">
-              <div class="campo">
-                <label for="descricao-avulso-pdv">Descrição *</label>
-                <input type="text" id="descricao-avulso-pdv" placeholder="Ex: Carne 1,2kg, Serviço, Consignado">
-              </div>
-              <div class="linha-formulario">
-                <div class="campo campo-preco">
-                  <label for="valor-avulso-pdv">Valor unitário R$ *</label>
-                  <input type="number" id="valor-avulso-pdv" step="0.01" min="0.01" placeholder="0,00">
-                </div>
-                <div class="campo">
-                  <label for="quantidade-avulso-pdv">Quantidade</label>
-                  <input type="number" id="quantidade-avulso-pdv" step="0.01" min="0.01" value="1">
-                </div>
-              </div>
-            </div>
-            <div class="rodape-modal">
-              <button type="button" id="btn-cancelar-avulso-pdv" class="btn-acao">Cancelar</button>
-              <button type="button" id="btn-confirmar-avulso-pdv" class="btn-primario">Adicionar ao Carrinho</button>
             </div>
           </div>
         </div>
@@ -568,5 +641,6 @@
   <script src="js/vendas.js"></script>
   <script src="js/comandas.js"></script>
   <script src="js/fiado.js"></script>
+  <script src="js/relatorios.js"></script>
 </body>
 </html>

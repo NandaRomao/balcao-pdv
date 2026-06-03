@@ -1,0 +1,361 @@
+/* Barra de Período */
+.barra-periodo {
+  margin-bottom: 1.5rem;
+}
+
+.botoes-periodo {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.btn-periodo {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  background-color: var(--cor-branco);
+  color: var(--cor-texto);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-periodo:hover {
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
+
+.btn-periodo.ativo {
+  background-color: var(--cor-destaque);
+  border-color: var(--cor-destaque);
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+.periodo-personalizado {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  animation: fadeIn 0.2s ease;
+}
+
+.periodo-personalizado label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+}
+
+.periodo-personalizado input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+/* Área de Relatórios */
+.area-relatorios {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.titulo-impressao {
+  display: none;
+}
+
+.periodo-impressao {
+  display: none;
+}
+
+/* Blocos */
+.bloco-relatorio {
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  padding: 1.5rem;
+  box-shadow: var(--sombra);
+  transition: var(--transicao);
+}
+
+.cabecalho-bloco {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.checkbox-imprimir {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.checkbox-imprimir input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkbox-imprimir h3 {
+  font-size: 1.1rem;
+  color: var(--cor-primaria);
+  margin: 0;
+}
+
+.subtitulo-bloco {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+/* Cartões Resumo */
+.cartoes-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.cartao-resumo {
+  background-color: var(--cor-fundo);
+  border-radius: var(--raio-borda);
+  padding: 1.25rem;
+  text-align: center;
+  transition: var(--transicao);
+}
+
+.cartao-resumo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.rotulo-cartao {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.valor-cartao {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--cor-destaque);
+}
+
+/* Listas */
+.lista-relatorio {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-lista-relatorio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 0.95rem;
+}
+
+.item-lista-relatorio:last-child {
+  border-bottom: none;
+}
+
+.nome-item-lista {
+  flex: 1;
+  color: var(--cor-primaria);
+}
+
+.valores-item-lista {
+  display: flex;
+  gap: 1.5rem;
+  text-align: right;
+}
+
+.valor-item-lista {
+  min-width: 100px;
+}
+
+.valor-item-lista .rotulo {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.valor-item-lista .valor {
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+/* Reposição */
+.lista-reposicao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grupo-reposicao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.titulo-grupo-reposicao {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.titulo-grupo-reposicao.acabou {
+  color: var(--cor-erro);
+}
+
+.titulo-grupo-reposicao.acabando {
+  color: #e67e22;
+}
+
+.item-reposicao {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.tag-reposicao {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag-reposicao.acabou {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--cor-erro);
+}
+
+.tag-reposicao.acabando {
+  background-color: rgba(230, 126, 34, 0.1);
+  color: #e67e22;
+}
+
+.info-reposicao {
+  flex: 1;
+}
+
+.nome-reposicao {
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+.estoque-reposicao {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Estados Vazios */
+.estado-vazio-relatorio {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.estado-vazio-relatorio .icone {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+/* Impressão */
+@media print {
+  body {
+    background-color: white;
+  }
+
+  .cabecalho,
+  .navegacao-lateral,
+  .barra-periodo,
+  #btn-imprimir-relatorio,
+  .checkbox-imprimir input[type="checkbox"] {
+    display: none !important;
+  }
+
+  .wrapper-conteudo {
+    margin-left: 0 !important;
+  }
+
+  .area-conteudo {
+    padding: 0;
+  }
+
+  .bloco-relatorio.nao-imprimir {
+    display: none !important;
+  }
+
+  .titulo-impressao {
+    display: block !important;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--cor-primaria);
+  }
+
+  .periodo-impressao {
+    display: block !important;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .bloco-relatorio {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cartao-resumo {
+    background-color: #f5f5f5;
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .botoes-periodo {
+    justify-content: center;
+  }
+
+  .periodo-personalizado {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cartoes-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .item-lista-relatorio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .valores-item-lista {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

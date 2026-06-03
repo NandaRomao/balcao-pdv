@@ -6,6 +6,7 @@ const { registrarProdutos } = require('./src/modules/produtos/produtos.ipc');
 const { registrarVendas } = require('./src/modules/vendas/vendas.ipc');
 const { registrarComandas } = require('./src/modules/comandas/comandas.ipc');
 const { registrarFiado } = require('./src/modules/fiado/fiado.ipc');
+const { registrarRelatorios } = require('./src/modules/relatorios/relatorios.ipc');
 
 let janelaPrincipal;
 
@@ -35,6 +36,7 @@ app.whenReady().then(() => {
   registrarVendas();
   registrarComandas();
   registrarFiado();
+  registrarRelatorios();
   criarJanela();
 
   app.on('activate', () => {
