@@ -300,6 +300,37 @@
             <div id="filtros-categoria" class="filtros-categoria"></div>
             <button id="btn-limpar-filtros" class="btn-limpar">Limpar</button>
             <span id="contador-produtos" class="contador-produtos">0 produtos</span>
+            <div class="alternar-visualizacao" role="group" aria-label="Forma de exibir os produtos">
+              <button class="btn-visualizacao" data-modo="lista" title="Lista para controle de estoque">☰ Lista</button>
+              <button class="btn-visualizacao" data-modo="cartoes" title="Cartões com foto">▦ Cartões</button>
+            </div>
+          </div>
+
+          <div id="area-estoque" class="area-estoque hidden">
+            <div class="cabecalho-estoque">
+              <div id="resumo-estoque" class="resumo-estoque"></div>
+              <button id="btn-imprimir-estoque" class="btn-limpar" title="Imprime a lista com uma coluna em branco para anotar a contagem">🖨️ Imprimir para conferência</button>
+            </div>
+            <div class="titulo-impressao-estoque">
+              <strong>Conferência de estoque</strong>
+              <span id="data-impressao-estoque"></span>
+            </div>
+            <table class="tabela-estoque">
+              <thead>
+                <tr>
+                  <th data-ordenar="nome" class="col-produto">Produto</th>
+                  <th data-ordenar="estoque_atual" class="col-num">Estoque</th>
+                  <th data-ordenar="estoque_minimo" class="col-num">Mínimo</th>
+                  <th data-ordenar="situacao">Situação</th>
+                  <th data-ordenar="preco_custo" class="col-num col-tela">Custo</th>
+                  <th data-ordenar="preco_venda" class="col-num">Venda</th>
+                  <th data-ordenar="valor_estoque" class="col-num col-tela" title="Custo × quantidade em estoque">Valor em estoque</th>
+                  <th class="col-contagem">Contagem</th>
+                  <th class="col-acoes col-tela"></th>
+                </tr>
+              </thead>
+              <tbody id="corpo-tabela-estoque"></tbody>
+            </table>
           </div>
 
           <div id="grid-produtos" class="grid-produtos">

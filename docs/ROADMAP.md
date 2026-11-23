@@ -19,6 +19,7 @@ Público inicial: bares, botecos, lanchonetes e mercearias de bairro (de prefer�
 - [x] Comandas: leitor de código de barras, botões −/+, item avulso, tempo aberta
 - [x] Formas de pagamento: dinheiro, PIX / QR Code, débito, crédito, voucher
 - [x] Correção de fuso horário e proteção de textos na tela
+- [x] Produtos em **Lista** ou **Cartões** (automático pela quantidade), com situação do estoque, ordenação, valor em estoque e impressão para conferência
 
 ---
 
@@ -28,6 +29,7 @@ Público inicial: bares, botecos, lanchonetes e mercearias de bairro (de prefer�
 - [ ] **Backup automático**: diário e ao fechar o app, para pasta ou pendrive, com botão "Restaurar"
 - [ ] **Abertura e fechamento de caixa**: troco inicial, sangria, suprimento, conferência do dinheiro no fim do dia
 - [ ] **Login, PIN do dono e auditoria**: perfis dono/operador; cancelar, dar desconto e apagar fiado pedem PIN; registro permanente de quem fez o quê e quando
+- [ ] **Histórico de movimentação de estoque**: cada entrada, saída, venda e cancelamento registrado por produto (para descobrir onde o estoque "sumiu")
 - [ ] **Blindagem do app**: Content-Security-Policy, bloquear navegação para sites externos, tirar os `onclick` do HTML
 - [ ] **Impressora térmica**: cupom da venda e extrato da comanda para o cliente conferir antes de pagar
 

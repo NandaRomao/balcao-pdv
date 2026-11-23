@@ -28,6 +28,151 @@ const feedbackProdutos = document.getElementById('feedback-produtos');
 
 let idProdutoAjuste = null;
 
+// ----- Visualização em lista (controle de estoque) -----
+const areaEstoque = document.getElementById('area-estoque');
+const corpoTabelaEstoque = document.getElementById('corpo-tabela-estoque');
+const resumoEstoque = document.getElementById('resumo-estoque');
+const botoesVisualizacao = document.querySelectorAll('.btn-visualizacao');
+const cabecalhosOrdenaveis = document.querySelectorAll('.tabela-estoque th[data-ordenar]');
+
+// Até a pessoa escolher, o modo é automático: poucos produtos -> cartões, muitos -> lista
+const LIMITE_MODO_AUTOMATICO = 20;
+let modoVisualizacao = localStorage.getItem('produtos.modoVisualizacao') || 'cartoes';
+let ordenacao = { campo: 'situacao', crescente: true };
+let produtosCarregados = [];
+
+function formatarQuantidade(valor) {
+  return Number(valor || 0).toLocaleString('pt-BR', { maximumFractionDigits: 3 });
+}
+
+// 0 = esgotado, 1 = baixo, 2 = ok (mesma regra do relatório de reposição)
+function situacaoEstoque(produto) {
+  if (produto.estoque_atual <= 0) return { ordem: 0, classe: 'esgotado', texto: 'Esgotado' };
+  if (produto.estoque_minimo > 0 && produto.estoque_atual <= produto.estoque_minimo) {
+    return { ordem: 1, classe: 'baixo', texto: 'Baixo' };
+  }
+  return { ordem: 2, classe: 'ok', texto: 'OK' };
+}
+
+function valorEmEstoque(produto) {
+  if (!produto.preco_custo || produto.estoque_atual <= 0) return 0;
+  return produto.preco_custo * produto.estoque_atual;
+}
+
+function valorParaOrdenar(produto, campo) {
+  if (campo === 'situacao') return situacaoEstoque(produto).ordem;
+  if (campo === 'valor_estoque') return valorEmEstoque(produto);
+  if (campo === 'nome') return (produto.nome || '').toLocaleLowerCase('pt-BR');
+  return produto[campo] || 0;
+}
+
+function ordenarProdutos(produtos) {
+  const { campo, crescente } = ordenacao;
+  return [...produtos].sort((a, b) => {
+    const va = valorParaOrdenar(a, campo);
+    const vb = valorParaOrdenar(b, campo);
+    let comparacao = typeof va === 'string' ? va.localeCompare(vb, 'pt-BR') : va - vb;
+    // Desempate sempre por nome, para a lista não "pular"
+    if (comparacao === 0 && campo !== 'nome') {
+      comparacao = (a.nome || '').localeCompare(b.nome || '', 'pt-BR');
+      return comparacao;
+    }
+    return crescente ? comparacao : -comparacao;
+  });
+}
+
+function renderizarResumoEstoque(produtos) {
+  const esgotados = produtos.filter(p => situacaoEstoque(p).ordem === 0).length;
+  const baixos = produtos.filter(p => situacaoEstoque(p).ordem === 1).length;
+  const valorTotal = produtos.reduce((soma, p) => soma + valorEmEstoque(p), 0);
+  const semCusto = produtos.filter(p => !p.preco_custo && p.estoque_atual > 0).length;
+
+  resumoEstoque.innerHTML = `
+    <span class="item-resumo-estoque esgotado"><strong>${esgotados}</strong> esgotado${esgotados !== 1 ? 's' : ''}</span>
+    <span class="item-resumo-estoque baixo"><strong>${baixos}</strong> com estoque baixo</span>
+    <span class="item-resumo-estoque" title="Soma de custo × quantidade dos produtos com custo cadastrado">
+      Valor em estoque: <strong>${formatarMoeda(valorTotal)}</strong>
+      ${semCusto > 0 ? `<em>(${semCusto} sem custo cadastrado)</em>` : ''}
+    </span>
+  `;
+}
+
+function renderizarListaEstoque(produtos) {
+  renderizarResumoEstoque(produtos);
+
+  cabecalhosOrdenaveis.forEach(th => {
+    th.classList.toggle('ordenado', th.dataset.ordenar === ordenacao.campo);
+    th.classList.toggle('decrescente', th.dataset.ordenar === ordenacao.campo && !ordenacao.crescente);
+  });
+
+  if (produtos.length === 0) {
+    corpoTabelaEstoque.innerHTML = `
+      <tr><td colspan="9" class="estado-vazio-tabela">
+        Nenhum produto encontrado. Use <strong>+ Novo Produto</strong> para cadastrar.
+      </td></tr>
+    `;
+    return;
+  }
+
+  corpoTabelaEstoque.innerHTML = ordenarProdutos(produtos).map(produto => {
+    const situacao = situacaoEstoque(produto);
+    const valor = valorEmEstoque(produto);
+    const detalhes = [produto.categoria, produto.codigo_barras].filter(Boolean).map(escaparHtml).join(' · ');
+
+    return `
+      <tr class="linha-estoque situacao-${situacao.classe}" data-id="${produto.id}">
+        <td class="col-produto">
+          <div class="nome-linha-estoque">${escaparHtml(produto.nome)}</div>
+          ${detalhes ? `<div class="detalhe-linha-estoque">${detalhes}</div>` : ''}
+        </td>
+        <td class="col-num qtd-estoque">${formatarQuantidade(produto.estoque_atual)} <span class="unidade-estoque">${escaparHtml(produto.unidade)}</span></td>
+        <td class="col-num">${produto.estoque_minimo > 0 ? formatarQuantidade(produto.estoque_minimo) : '—'}</td>
+        <td><span class="tag-situacao ${situacao.classe}">${situacao.texto}</span></td>
+        <td class="col-num col-tela">${produto.preco_custo ? formatarMoeda(produto.preco_custo) : '—'}</td>
+        <td class="col-num">${formatarMoeda(produto.preco_venda)}</td>
+        <td class="col-num col-tela">${valor > 0 ? formatarMoeda(valor) : '—'}</td>
+        <td class="col-contagem"></td>
+        <td class="col-acoes col-tela">
+          <button class="btn-acao" data-acao="estoque" title="Entrada ou saída de estoque">Estoque</button>
+          <button class="btn-acao primario" data-acao="editar">Editar</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function aplicarModoVisualizacao() {
+  const lista = modoVisualizacao === 'lista';
+  areaEstoque.classList.toggle('hidden', !lista);
+  gridProdutos.classList.toggle('hidden', lista);
+  moduloProdutos.classList.toggle('modo-lista', lista);
+  botoesVisualizacao.forEach(btn => btn.classList.toggle('ativo', btn.dataset.modo === modoVisualizacao));
+}
+
+function trocarModoVisualizacao(modo) {
+  modoVisualizacao = modo;
+  localStorage.setItem('produtos.modoVisualizacao', modo);
+  aplicarModoVisualizacao();
+  renderizarProdutos(produtosCarregados);
+}
+
+function ordenarPor(campo) {
+  if (ordenacao.campo === campo) {
+    ordenacao.crescente = !ordenacao.crescente;
+  } else {
+    ordenacao = { campo, crescente: true };
+  }
+  renderizarListaEstoque(produtosCarregados);
+}
+
+function imprimirEstoque() {
+  document.getElementById('data-impressao-estoque').textContent =
+    new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  document.body.classList.add('imprimindo-estoque');
+  window.print();
+  setTimeout(() => document.body.classList.remove('imprimindo-estoque'), 500);
+}
+
 function mostrarFeedback(mensagem, tipo) {
   feedbackProdutos.textContent = mensagem;
   feedbackProdutos.className = `feedback ${tipo}`;
@@ -42,6 +187,25 @@ function formatarMoeda(valor) {
 }
 
 function renderizarProdutos(produtos) {
+  produtosCarregados = produtos;
+
+  // Modo automático só com a lista completa (sem busca/filtro), para não ficar trocando enquanto digita
+  const semFiltro = !filtrosAtivos.busca && !filtrosAtivos.categoria && !filtrosAtivos.alertaEstoque;
+  if (!localStorage.getItem('produtos.modoVisualizacao') && semFiltro) {
+    const modoAutomatico = produtos.length > LIMITE_MODO_AUTOMATICO ? 'lista' : 'cartoes';
+    if (modoAutomatico !== modoVisualizacao) {
+      modoVisualizacao = modoAutomatico;
+      aplicarModoVisualizacao();
+    }
+  }
+
+  contadorProdutos.textContent = `${produtos.length} produto${produtos.length !== 1 ? 's' : ''}`;
+
+  if (modoVisualizacao === 'lista') {
+    renderizarListaEstoque(produtos);
+    return;
+  }
+
   if (produtos.length === 0) {
     gridProdutos.innerHTML = `
       <div class="estado-vazio">
@@ -80,7 +244,6 @@ function renderizarProdutos(produtos) {
     `;
   }).join('');
 
-  contadorProdutos.textContent = `${produtos.length} produto${produtos.length > 1 ? 's' : ''}`;
 }
 
 async function carregarProdutos() {
@@ -320,6 +483,22 @@ function registrarEventListeners() {
 
   btnLimparFiltros.addEventListener('click', limparFiltros);
 
+  botoesVisualizacao.forEach(btn => {
+    btn.addEventListener('click', () => trocarModoVisualizacao(btn.dataset.modo));
+  });
+  cabecalhosOrdenaveis.forEach(th => {
+    th.addEventListener('click', () => ordenarPor(th.dataset.ordenar));
+  });
+  corpoTabelaEstoque.addEventListener('click', (evento) => {
+    const botao = evento.target.closest('button[data-acao]');
+    const linha = evento.target.closest('tr[data-id]');
+    if (!botao || !linha) return;
+    const id = parseInt(linha.dataset.id, 10);
+    if (botao.dataset.acao === 'estoque') abrirModalAjuste(id);
+    if (botao.dataset.acao === 'editar') editarProduto(id);
+  });
+  document.getElementById('btn-imprimir-estoque').addEventListener('click', imprimirEstoque);
+
   document.getElementById('foto-produto').addEventListener('change', (evento) => {
     const arquivo = evento.target.files[0];
     if (arquivo) {
@@ -354,6 +533,7 @@ function registrarEventListeners() {
 }
 
 function inicializarProdutos() {
+  aplicarModoVisualizacao();
   carregarProdutos();
   carregarCategorias();
 }

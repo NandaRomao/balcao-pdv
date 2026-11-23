@@ -531,3 +531,275 @@
     margin-left: 0;
   }
 }
+/* ===== Alternar Lista / Cartões ===== */
+.alternar-visualizacao {
+  display: flex;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  overflow: hidden;
+}
+
+.btn-visualizacao {
+  padding: 0.45rem 0.85rem;
+  border: none;
+  background-color: var(--cor-branco);
+  color: #777;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-visualizacao + .btn-visualizacao {
+  border-left: 1px solid var(--cor-borda);
+}
+
+.btn-visualizacao.ativo {
+  background-color: var(--cor-primaria);
+  color: var(--cor-branco);
+  font-weight: 600;
+}
+
+/* A tabela precisa de mais largura que os cartões */
+#modulo-produtos.modo-lista {
+  max-width: 1150px;
+}
+
+/* ===== Lista de estoque ===== */
+.cabecalho-estoque {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.resumo-estoque {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.item-resumo-estoque strong {
+  color: var(--cor-primaria);
+}
+
+.item-resumo-estoque.esgotado strong {
+  color: var(--cor-erro);
+}
+
+.item-resumo-estoque.baixo strong {
+  color: #b7791f;
+}
+
+.item-resumo-estoque em {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.titulo-impressao-estoque {
+  display: none;
+}
+
+.tabela-estoque {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+
+.tabela-estoque th {
+  position: sticky;
+  top: 0;
+  padding: 0.625rem 0.75rem;
+  background-color: var(--cor-fundo);
+  border-bottom: 2px solid var(--cor-borda);
+  color: #666;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: left;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tabela-estoque th[data-ordenar] {
+  cursor: pointer;
+}
+
+.tabela-estoque th[data-ordenar]:hover {
+  color: var(--cor-secundaria);
+}
+
+.tabela-estoque th.ordenado {
+  color: var(--cor-primaria);
+}
+
+.tabela-estoque th.ordenado::after {
+  content: ' ▲';
+  font-size: 0.65rem;
+}
+
+.tabela-estoque th.ordenado.decrescente::after {
+  content: ' ▼';
+}
+
+.tabela-estoque td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--cor-borda);
+  vertical-align: middle;
+}
+
+.tabela-estoque tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-estoque tbody tr:hover {
+  background-color: #fafbfd;
+}
+
+.tabela-estoque .col-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tabela-estoque th.col-num {
+  text-align: right;
+}
+
+.nome-linha-estoque {
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+.detalhe-linha-estoque {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.qtd-estoque {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.unidade-estoque {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #999;
+}
+
+.situacao-esgotado .qtd-estoque {
+  color: var(--cor-erro);
+}
+
+.situacao-baixo .qtd-estoque {
+  color: #b7791f;
+}
+
+.tag-situacao {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag-situacao.esgotado {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--cor-erro);
+}
+
+.tag-situacao.baixo {
+  background-color: rgba(232, 184, 75, 0.2);
+  color: #8a5a00;
+}
+
+.tag-situacao.ok {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--cor-sucesso);
+}
+
+.tabela-estoque .col-acoes {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.tabela-estoque .col-acoes .btn-acao {
+  flex: none;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* A coluna de contagem só aparece no papel */
+.tabela-estoque .col-contagem {
+  display: none;
+}
+
+.estado-vazio-tabela {
+  padding: 2.5rem 1rem !important;
+  text-align: center;
+  color: #888;
+}
+
+/* ===== Impressão da conferência de estoque ===== */
+@media print {
+  body.imprimindo-estoque .modulo:not(#modulo-produtos),
+  body.imprimindo-estoque #modulo-produtos .cabecalho-modulo,
+  body.imprimindo-estoque #modulo-produtos .barra-ferramentas,
+  body.imprimindo-estoque #modulo-produtos .cabecalho-estoque,
+  body.imprimindo-estoque .painel-comandas,
+  body.imprimindo-estoque .tabela-estoque .col-tela,
+  body.imprimindo-estoque .feedback {
+    display: none !important;
+  }
+
+  body.imprimindo-estoque #modulo-produtos {
+    max-width: none;
+  }
+
+  body.imprimindo-estoque .titulo-impressao-estoque {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  body.imprimindo-estoque .tabela-estoque {
+    border: 1px solid #999;
+    font-size: 0.8rem;
+  }
+
+  body.imprimindo-estoque .tabela-estoque th {
+    position: static;
+    background: none;
+    color: #000;
+  }
+
+  body.imprimindo-estoque .tabela-estoque th.ordenado::after {
+    content: '';
+  }
+
+  body.imprimindo-estoque .tabela-estoque td,
+  body.imprimindo-estoque .tabela-estoque th {
+    border-bottom: 1px solid #bbb;
+    padding: 0.35rem 0.5rem;
+  }
+
+  body.imprimindo-estoque .tabela-estoque tr {
+    break-inside: avoid;
+  }
+
+  body.imprimindo-estoque .tabela-estoque .col-contagem {
+    display: table-cell;
+    width: 6rem;
+    border-left: 1px solid #bbb;
+  }
+}
