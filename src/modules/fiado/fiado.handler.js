@@ -1,4 +1,5 @@
 const { db } = require('../../database/db');
+const { cancelarVendaInterno } = require('../vendas/vendas.handler');
 
 function calcularSaldo(clienteId) {
   const debitos = db.prepare(`
@@ -267,11 +268,17 @@ function removerLancamento(lancamentoId) {
       return { sucesso: false, erro: 'Lançamento não encontrado' };
     }
 
-    db.prepare('DELETE FROM fiado_lancamentos WHERE id = ?').run(lancamentoId);
-
     let aviso = '';
-    if (lancamento.venda_id) {
-      aviso = ' Este lançamento estava vinculado a uma venda. Ajuste o estoque manualmente se necessário.';
+    if (lancamento.venda_id && lancamento.tipo === 'debito') {
+      // Débito de produto: cancela a venda vinculada, o que devolve o estoque
+      // e remove o lançamento, tudo na mesma transação.
+      db.transaction(() => {
+        cancelarVendaInterno(lancamento.venda_id, 'Débito removido do fiado');
+        db.prepare('DELETE FROM fiado_lancamentos WHERE id = ?').run(lancamentoId);
+      })();
+      aviso = ' A venda vinculada foi cancelada e o estoque devolvido.';
+    } else {
+      db.prepare('DELETE FROM fiado_lancamentos WHERE id = ?').run(lancamentoId);
     }
 
     return { sucesso: true, dados: { aviso } };

@@ -5,6 +5,7 @@ const inicializadores = {
   configuracoes: null,
   produtos: () => window.inicializarProdutos(),
   vendas: () => window.inicializarVendas(),
+  historico: () => window.inicializarHistorico(),
   clientes: () => window.inicializarClientes(),
   relatorios: () => window.inicializarRelatorios()
 };

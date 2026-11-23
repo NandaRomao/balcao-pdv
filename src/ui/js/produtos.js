@@ -56,7 +56,7 @@ function renderizarProdutos(produtos) {
   gridProdutos.innerHTML = produtos.map(produto => {
     const alerta = produto.estoque_atual <= produto.estoque_minimo;
     const fotoHtml = produto.foto_path
-      ? `<img src="${produto.foto_path}" alt="${produto.nome}" class="foto-produto">`
+      ? `<img src="${escaparHtml(produto.foto_path)}" alt="${escaparHtml(produto.nome)}" class="foto-produto">`
       : `<div class="foto-placeholder">📷</div>`;
 
     return `
@@ -64,12 +64,12 @@ function renderizarProdutos(produtos) {
         ${alerta ? '<span class="badge-alerta">Estoque Baixo</span>' : ''}
         ${fotoHtml}
         <div class="info-produto">
-          <div class="nome-produto">${produto.nome}</div>
-          ${produto.categoria ? `<span class="categoria-produto">${produto.categoria}</span>` : ''}
+          <div class="nome-produto">${escaparHtml(produto.nome)}</div>
+          ${produto.categoria ? `<span class="categoria-produto">${escaparHtml(produto.categoria)}</span>` : ''}
         </div>
         <div class="preco-produto">${formatarMoeda(produto.preco_venda)}</div>
         <div class="estoque-produto ${alerta ? 'alerta' : ''}">
-          Estoque: ${produto.estoque_atual} ${produto.unidade}${alerta ? ` (mín: ${produto.estoque_minimo})` : ''}
+          Estoque: ${produto.estoque_atual} ${escaparHtml(produto.unidade)}${alerta ? ` (mín: ${produto.estoque_minimo})` : ''}
         </div>
         <div class="acoes-card">
           <button class="btn-acao primario" onclick="editarProduto(${produto.id})">Editar</button>

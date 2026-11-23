@@ -21,7 +21,10 @@ contextBridge.exposeInMainWorld('api', {
     buscarProdutos: (termo) =>
       ipcRenderer.invoke('vendas:buscar-produtos', termo),
     finalizar: (dadosVenda) =>
-      ipcRenderer.invoke('vendas:finalizar', dadosVenda)
+      ipcRenderer.invoke('vendas:finalizar', dadosVenda),
+    listar: (periodo) => ipcRenderer.invoke('vendas:listar', periodo),
+    buscarItens: (vendaId) => ipcRenderer.invoke('vendas:buscar-itens', vendaId),
+    cancelar: (vendaId, motivo) => ipcRenderer.invoke('vendas:cancelar', vendaId, motivo)
   },
   comandas: {
     listarAbertas: () => ipcRenderer.invoke('comandas:listar-abertas'),
@@ -31,6 +34,8 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.invoke('comandas:adicionar-item', comandaId, item),
     removerItem: (itemId) =>
       ipcRenderer.invoke('comandas:remover-item', itemId),
+    alterarQuantidade: (itemId, delta) =>
+      ipcRenderer.invoke('comandas:alterar-quantidade', itemId, delta),
     fechar: (comandaId, dadosPagamento) =>
       ipcRenderer.invoke('comandas:fechar', comandaId, dadosPagamento),
     cancelar: (comandaId) =>

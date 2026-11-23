@@ -1,0 +1,238 @@
+/* ===== Histórico de Vendas ===== */
+.barra-historico {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.botoes-periodo-historico {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-periodo-historico {
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  background-color: var(--cor-branco);
+  color: var(--cor-texto);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transicao);
+}
+
+.btn-periodo-historico:hover {
+  border-color: var(--cor-secundaria);
+  color: var(--cor-secundaria);
+}
+
+.btn-periodo-historico.ativo {
+  background-color: var(--cor-destaque);
+  border-color: var(--cor-destaque);
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+.dia-historico {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.dia-historico input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.resumo-historico {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.resumo-historico strong {
+  color: var(--cor-primaria);
+}
+
+.resumo-canceladas {
+  color: var(--cor-erro);
+}
+
+.lista-historico {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.venda-historico {
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  transition: var(--transicao);
+}
+
+.venda-historico:hover,
+.venda-historico.aberta {
+  border-color: var(--cor-secundaria);
+}
+
+.linha-venda-historico {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.hora-venda {
+  min-width: 3.25rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+.info-venda {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.numero-venda {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.origem-venda {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-venda {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.total-venda-historico {
+  font-weight: 700;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-primaria);
+}
+
+.btn-cancelar-venda-historico {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.9rem;
+}
+
+.tag-cancelada {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--cor-erro);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.venda-historico.cancelada .hora-venda,
+.venda-historico.cancelada .origem-venda,
+.venda-historico.cancelada .total-venda-historico {
+  color: #aaa;
+}
+
+.venda-historico.cancelada .total-venda-historico {
+  text-decoration: line-through;
+}
+
+.detalhe-venda-historico {
+  padding: 0 1rem 0.875rem 5.25rem;
+  border-top: 1px dashed var(--cor-borda);
+}
+
+.itens-venda-historico {
+  padding-top: 0.625rem;
+}
+
+.itens-venda-historico.carregando {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.item-venda-historico {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+  font-size: 0.875rem;
+}
+
+.item-venda-historico .qtd {
+  min-width: 2.5rem;
+  color: #777;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-venda-historico .nome {
+  flex: 1;
+}
+
+.item-venda-historico .nome em {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.item-venda-historico .valor {
+  font-variant-numeric: tabular-nums;
+}
+
+.pagamento-venda-historico {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.motivo-cancelamento {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background-color: rgba(220, 53, 69, 0.06);
+  color: var(--cor-erro);
+  font-size: 0.85rem;
+}
+
+/* Modal de cancelamento */
+.modal-cancelar-venda .container-modal {
+  max-width: 480px;
+}
+
+.resumo-cancelar-venda {
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+.efeitos-cancelamento {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.efeitos-cancelamento li {
+  margin-bottom: 0.25rem;
+}
+
+.campo-invalido {
+  border-color: var(--cor-erro) !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}

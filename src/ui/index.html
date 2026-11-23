@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/comandas.css">
   <link rel="stylesheet" href="css/fiado.css">
   <link rel="stylesheet" href="css/relatorios.css">
+  <link rel="stylesheet" href="css/historico.css">
 </head>
 <body>
   <header class="cabecalho">
@@ -54,8 +55,22 @@
         <button id="btn-cancelar-comanda" class="btn-cancelar-comanda">Cancelar comanda</button>
       </div>
       <div class="busca-comanda">
-        <input type="text" id="busca-produto-comanda" placeholder="Adicionar produto..." autocomplete="off">
+        <div class="linha-busca-comanda">
+          <input type="text" id="busca-produto-comanda" placeholder="Produto ou código de barras..." autocomplete="off">
+          <button id="btn-avulso-comanda" class="btn-avulso-comanda" title="Lançar item sem cadastro">+ Avulso</button>
+        </div>
         <div id="resultados-comanda" class="resultados-comanda"></div>
+      </div>
+      <div id="form-avulso-comanda" class="form-avulso-comanda hidden">
+        <input type="text" id="descricao-avulso-comanda" placeholder="Descrição (ex: Porção de fritas)">
+        <div class="linha-avulso-comanda">
+          <input type="number" id="valor-avulso-comanda" step="0.01" min="0.01" placeholder="Valor R$">
+          <input type="number" id="quantidade-avulso-comanda" step="1" min="1" value="1" title="Quantidade">
+        </div>
+        <div class="acoes-form-comanda">
+          <button id="btn-confirmar-avulso-comanda" class="btn-mini-primario">Adicionar</button>
+          <button id="btn-cancelar-avulso-comanda" class="btn-mini-secundario">Cancelar</button>
+        </div>
       </div>
       <div id="itens-comanda" class="itens-comanda"></div>
       <div class="total-comanda">
@@ -67,9 +82,10 @@
         <span class="rotulo-secao">Forma de Pagamento</span>
         <div class="botoes-pagamento-comanda">
           <button class="btn-pag-comanda" data-forma="dinheiro">Dinheiro</button>
-          <button class="btn-pag-comanda" data-forma="pix">PIX</button>
+          <button class="btn-pag-comanda" data-forma="pix">PIX / QR Code</button>
           <button class="btn-pag-comanda" data-forma="debito">Débito</button>
           <button class="btn-pag-comanda" data-forma="credito">Crédito</button>
+          <button class="btn-pag-comanda" data-forma="voucher">Voucher</button>
         </div>
         <div class="campo-mini">
           <label>Desconto R$</label>
@@ -96,10 +112,10 @@
       <nav class="navegacao-lateral">
         <ul class="menu-modulos">
           <li><a href="#" class="ativo" data-modulo="vendas">PDV</a></li>
+          <li><a href="#" data-modulo="historico">Vendas</a></li>
           <li><a href="#" data-modulo="configuracoes">Configurações</a></li>
           <li><a href="#" data-modulo="produtos">Produtos</a></li>
           <li><a href="#" data-modulo="clientes">Clientes</a></li>
-          <li><a href="#" data-modulo="comandas">Comandas</a></li>
           <li><a href="#" data-modulo="relatorios">Relatórios</a></li>
         </ul>
       </nav>
@@ -114,6 +130,7 @@
                 <input type="text" id="busca-pdv" placeholder="Buscar produto ou código de barras..." autocomplete="off">
               </div>
               <p class="hint-busca">Digite para buscar por nome • Enter para código de barras</p>
+              <button id="btn-item-avulso" class="btn-item-avulso">+ Item Avulso</button>
               <div id="lista-resultados" class="resultados-busca"></div>
             </div>
 
@@ -152,9 +169,10 @@
                 <h4>Forma de Pagamento</h4>
                 <div class="botoes-pagamento">
                   <button class="btn-pagamento" data-forma="dinheiro">💵 Dinheiro</button>
-                  <button class="btn-pagamento" data-forma="pix">📱 PIX</button>
+                  <button class="btn-pagamento" data-forma="pix">📱 PIX / QR Code</button>
                   <button class="btn-pagamento" data-forma="debito">💳 Débito</button>
                   <button class="btn-pagamento" data-forma="credito">💳 Crédito</button>
+                  <button class="btn-pagamento" data-forma="voucher">🎟️ Voucher</button>
                 </div>
                 <div id="area-troco" class="area-troco hidden">
                   <div class="campo-troco">
@@ -176,6 +194,29 @@
               </div>
             </div>
           </div>
+        </section>
+
+        <!-- Módulo Histórico de Vendas -->
+        <section id="modulo-historico" class="modulo modulo-historico">
+          <div class="cabecalho-modulo">
+            <div class="titulo-grupo">
+              <h2>Vendas</h2>
+              <p class="subtitulo">Confira as vendas feitas e cancele se precisar</p>
+            </div>
+          </div>
+
+          <div class="barra-historico">
+            <div class="botoes-periodo-historico">
+              <button class="btn-periodo-historico ativo" data-periodo="hoje">Hoje</button>
+              <button class="btn-periodo-historico" data-periodo="ontem">Ontem</button>
+              <button class="btn-periodo-historico" data-periodo="7dias">7 dias</button>
+              <label class="dia-historico">Dia <input type="date" id="data-historico"></label>
+            </div>
+            <div id="resumo-historico" class="resumo-historico"></div>
+          </div>
+
+          <div id="lista-historico" class="lista-historico"></div>
+          <span id="feedback-historico" class="feedback hidden"></span>
         </section>
 
         <!-- Módulo Configurações -->
@@ -630,11 +671,68 @@
           </div>
         </div>
 
+        <!-- Modal Item Avulso (PDV) -->
+        <div id="overlay-modal-avulso" class="overlay-modal">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3>Item Avulso</h3>
+              <button id="btn-fechar-avulso-pdv" class="btn-fechar">&times;</button>
+            </div>
+            <div class="corpo-modal formulario-produto">
+              <div class="campo">
+                <label for="descricao-avulso-pdv">Descrição *</label>
+                <input type="text" id="descricao-avulso-pdv" placeholder="Ex: Carne 1,2kg, Serviço, Consignado">
+              </div>
+              <div class="linha-formulario">
+                <div class="campo campo-preco">
+                  <label for="valor-avulso-pdv">Valor unitário R$ *</label>
+                  <input type="number" id="valor-avulso-pdv" step="0.01" min="0.01" placeholder="0,00">
+                </div>
+                <div class="campo">
+                  <label for="quantidade-avulso-pdv">Quantidade</label>
+                  <input type="number" id="quantidade-avulso-pdv" step="0.01" min="0.01" value="1">
+                </div>
+              </div>
+            </div>
+            <div class="rodape-modal">
+              <button type="button" id="btn-cancelar-avulso-pdv" class="btn-acao">Cancelar</button>
+              <button type="button" id="btn-confirmar-avulso-pdv" class="btn-primario">Adicionar ao Carrinho</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Cancelar Venda -->
+        <div id="overlay-modal-cancelar-venda" class="overlay-modal modal-cancelar-venda">
+          <div class="container-modal">
+            <div class="cabecalho-modal">
+              <h3 id="titulo-cancelar-venda">Cancelar venda</h3>
+              <button id="btn-fechar-cancelar-venda" class="btn-fechar">&times;</button>
+            </div>
+            <div class="corpo-modal formulario-produto">
+              <p id="resumo-cancelar-venda" class="resumo-cancelar-venda"></p>
+              <ul class="efeitos-cancelamento">
+                <li>Os produtos voltam para o estoque</li>
+                <li>A venda sai dos relatórios, mas continua no histórico como cancelada</li>
+                <li id="aviso-fiado-cancelar" class="hidden">O débito será retirado do fiado do cliente</li>
+              </ul>
+              <div class="campo">
+                <label for="motivo-cancelar-venda">Motivo *</label>
+                <input type="text" id="motivo-cancelar-venda" placeholder="Ex: Lançado errado, cliente desistiu, cobrado duas vezes">
+              </div>
+            </div>
+            <div class="rodape-modal">
+              <button type="button" id="btn-voltar-cancelar-venda" class="btn-acao">Voltar</button>
+              <button type="button" id="btn-confirmar-cancelar-venda" class="btn-acao perigo">Cancelar venda</button>
+            </div>
+          </div>
+        </div>
+
         <span id="feedback-vendas" class="feedback hidden"></span>
       </main>
     </div>
   </div>
 
+  <script src="js/utils.js"></script>
   <script src="js/navegacao.js"></script>
   <script src="js/configuracoes.js"></script>
   <script src="js/produtos.js"></script>
@@ -642,5 +740,6 @@
   <script src="js/comandas.js"></script>
   <script src="js/fiado.js"></script>
   <script src="js/relatorios.js"></script>
+  <script src="js/historico.js"></script>
 </body>
 </html>

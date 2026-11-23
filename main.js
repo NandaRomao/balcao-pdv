@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 const { runMigrations } = require('./src/database/db');
 const { registrarConfiguracoes } = require('./src/modules/configuracoes/configuracoes.ipc');
@@ -30,7 +30,17 @@ function criarJanela() {
 }
 
 app.whenReady().then(() => {
-  runMigrations();
+  try {
+    runMigrations();
+  } catch (erro) {
+    dialog.showErrorBox(
+      'Erro ao preparar o banco de dados',
+      `O Balcão PDV não pôde atualizar o banco de dados e será fechado. A atualização que falhou foi desfeita e seus dados estão preservados.\n\n${erro.message}`
+    );
+    app.quit();
+    return;
+  }
+
   registrarConfiguracoes();
   registrarProdutos();
   registrarVendas();

@@ -15,7 +15,8 @@ function resumoPeriodo(periodo) {
         COALESCE(SUM(total), 0) as total_vendido,
         COUNT(*) as numero_vendas
       FROM vendas
-      WHERE datetime(data_hora, 'localtime') BETWEEN ? AND ?
+      WHERE status != 'cancelada'
+      AND datetime(data_hora, 'localtime') BETWEEN ? AND ?
     `).get(inicio, fim);
 
     const totalVendido = resultado.total_vendido;
@@ -45,7 +46,8 @@ function vendasPorFormaPagamento(periodo) {
         COUNT(*) as quantidade,
         COALESCE(SUM(total), 0) as total
       FROM vendas
-      WHERE datetime(data_hora, 'localtime') BETWEEN ? AND ?
+      WHERE status != 'cancelada'
+      AND datetime(data_hora, 'localtime') BETWEEN ? AND ?
       GROUP BY forma_pagamento
       ORDER BY total DESC
     `).all(inicio, fim);
@@ -67,7 +69,8 @@ function produtosMaisVendidos(periodo) {
         COALESCE(SUM(vi.subtotal), 0) as total_valor
       FROM venda_itens vi
       JOIN vendas v ON vi.venda_id = v.id
-      WHERE datetime(v.data_hora, 'localtime') BETWEEN ? AND ?
+      WHERE v.status != 'cancelada'
+      AND datetime(v.data_hora, 'localtime') BETWEEN ? AND ?
       GROUP BY vi.nome_produto
       ORDER BY total_quantidade DESC
       LIMIT 20

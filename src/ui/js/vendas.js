@@ -62,15 +62,15 @@
 
     listaResultados.innerHTML = produtos.map(produto => {
       const foto = produto.foto_path
-        ? `<img src="${produto.foto_path}" class="foto-resultado" alt="">`
+        ? `<img src="${escaparHtml(produto.foto_path)}" class="foto-resultado" alt="">`
         : `<div class="foto-placeholder">📷</div>`;
 
       return `
         <li class="item-resultado" data-id="${produto.id}">
           ${foto}
           <div class="info-resultado">
-            <div class="nome-resultado">${produto.nome}</div>
-            <div class="meta-resultado">Estoque: ${produto.estoque_atual} ${produto.unidade}</div>
+            <div class="nome-resultado">${escaparHtml(produto.nome)}</div>
+            <div class="meta-resultado">Estoque: ${produto.estoque_atual} ${escaparHtml(produto.unidade)}</div>
           </div>
           <div class="preco-resultado">${formatarMoeda(produto.preco_venda)}</div>
         </li>
@@ -213,7 +213,7 @@
     listaCarrinho.innerHTML = carrinho.map(item => `
       <div class="item-carrinho">
         <div class="info-item-carrinho">
-          <div class="nome-item-carrinho">${item.nome_produto}</div>
+          <div class="nome-item-carrinho">${escaparHtml(item.nome_produto)}</div>
           <div class="preco-item-carrinho">${formatarMoeda(item.preco_unitario)} / un</div>
           <div class="controles-quantidade">
             <button class="btn-quantidade" onclick="window.alterarQuantidadeVenda(${item.id_carrinho}, -1)">−</button>
@@ -229,7 +229,7 @@
     `).join('');
 
     const totalItens = carrinho.reduce((soma, item) => soma + item.quantidade, 0);
-    contadorItens.textContent = `${totalItens} item${totalItens > 1 ? 's' : ''}`;
+    contadorItens.textContent = `${totalItens} ite${totalItens !== 1 ? 'ns' : 'm'}`;
   }
 
   function calcularTotais() {
