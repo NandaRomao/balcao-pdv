@@ -5,7 +5,7 @@ Ordem: **usar todo dia sem medo → poder vender → crescer.**
 
 Público inicial: bares, botecos, lanchonetes e mercearias de bairro (de preferência MEI, que não precisa emitir NFC-e para venda a pessoa física). Primeira cliente: a própria loja.
 
-*Atualizado em 22/11/2026.*
+*Atualizado em 26/11/2026.*
 
 ---
 
@@ -25,7 +25,7 @@ Público inicial: bares, botecos, lanchonetes e mercearias de bairro (de prefer�
 
 ## Etapa 1 — Usar na própria loja com segurança
 
-- [ ] **Juntar o ramo `feat/correcoes-comandas-historico` na `main`** (depois de testar)
+- [x] **Juntar o ramo `feat/correcoes-comandas-historico` na `main`** (PR #1)
 - [ ] **Backup automático**: diário e ao fechar o app, para pasta ou pendrive, com botão "Restaurar"
 - [ ] **Abertura e fechamento de caixa**: troco inicial, sangria, suprimento, conferência do dinheiro no fim do dia
 - [ ] **Login, PIN do dono e auditoria**: perfis dono/operador; cancelar, dar desconto e apagar fiado pedem PIN; registro permanente de quem fez o quê e quando
