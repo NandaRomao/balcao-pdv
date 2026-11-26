@@ -39,6 +39,17 @@
 
   const feedbackComanda = document.getElementById('feedback-comanda');
 
+  const btnAvulsoComanda = document.getElementById('btn-avulso-comanda');
+  const formAvulsoComanda = document.getElementById('form-avulso-comanda');
+  const descricaoAvulsoComanda = document.getElementById('descricao-avulso-comanda');
+  const valorAvulsoComanda = document.getElementById('valor-avulso-comanda');
+  const quantidadeAvulsoComanda = document.getElementById('quantidade-avulso-comanda');
+  const btnConfirmarAvulsoComanda = document.getElementById('btn-confirmar-avulso-comanda');
+  const btnCancelarAvulsoComanda = document.getElementById('btn-cancelar-avulso-comanda');
+
+  let itensAtuais = [];
+  let ultimosResultadosBusca = [];
+
   function formatarMoeda(valor) {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -48,8 +59,19 @@
 
   function formatarHora(dataString) {
     if (!dataString) return '';
-    const data = new Date(dataString);
+    const data = dataDoBanco(dataString);
     return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function tempoAberta(dataString) {
+    const data = dataDoBanco(dataString);
+    if (!data) return '';
+    const minutos = Math.max(0, Math.floor((Date.now() - data.getTime()) / 60000));
+    if (minutos < 1) return 'agora';
+    if (minutos < 60) return `há ${minutos} min`;
+    const horas = Math.floor(minutos / 60);
+    const resto = minutos % 60;
+    return `há ${horas}h${resto ? String(resto).padStart(2, '0') : ''}`;
   }
 
   function mostrarFeedback(mensagem, tipo) {
@@ -146,11 +168,11 @@
            data-id="${comanda.id}"
            onclick="window.selecionarComandaPainel(${comanda.id})">
         <div class="cabecalho-item-comanda">
-          <span class="nome-item-comanda">${comanda.nome_cliente || 'Mesa ' + comanda.mesa}</span>
+          <span class="nome-item-comanda">${escaparHtml(comanda.nome_cliente || 'Mesa ' + comanda.mesa)}</span>
           <span class="total-item-comanda">${formatarMoeda(comanda.total_parcial)}</span>
         </div>
         <div class="meta-item-comanda">
-          ${comanda.qtd_itens} item${comanda.qtd_itens !== 1 ? 's' : ''} • ${comanda.mesa ? 'Mesa ' + comanda.mesa : 'Balcão'}
+          ${comanda.qtd_itens} ite${comanda.qtd_itens !== 1 ? 'ns' : 'm'} • ${comanda.mesa ? 'Mesa ' + escaparHtml(comanda.mesa) : 'Balcão'} • aberta ${tempoAberta(comanda.aberta_em)}
         </div>
       </div>
     `).join('');
@@ -161,6 +183,7 @@
     detalheComanda.classList.remove('hidden');
     pagamentoComanda.classList.add('hidden');
     btnFecharComanda.classList.remove('hidden');
+    esconderFormAvulso();
 
     document.querySelectorAll('.item-comanda').forEach(el => {
       el.classList.toggle('selecionado', parseInt(el.dataset?.id || 0) === id);
@@ -186,6 +209,7 @@
   }
 
   function renderizarItens(itens) {
+    itensAtuais = itens;
     if (itens.length === 0) {
       itensComanda.innerHTML = '<div class="estado-vazio-comandas"><p>Adicione produtos</p></div>';
       return;
@@ -194,11 +218,16 @@
     itensComanda.innerHTML = itens.map(item => `
       <div class="item-comanda-detalhe">
         <div class="info-item-comanda-detalhe">
-          <div class="nome-item-comanda-detalhe">${item.nome_produto}</div>
-          <div class="hora-item-comanda">${formatarHora(item.adicionado_em)} • ${item.quantidade} un</div>
+          <div class="nome-item-comanda-detalhe">${escaparHtml(item.nome_produto)}</div>
+          <div class="hora-item-comanda">${formatarHora(item.adicionado_em)} • ${formatarMoeda(item.preco_unitario)} un${item.produto_id ? '' : ' • avulso'}</div>
+        </div>
+        <div class="controles-qtd-comanda">
+          <button class="btn-qtd-comanda" title="Tirar 1" onclick="window.alterarQtdItemComandaPainel(${item.id}, -1)">−</button>
+          <span class="qtd-item-comanda">${item.quantidade}</span>
+          <button class="btn-qtd-comanda" title="Mais 1" onclick="window.alterarQtdItemComandaPainel(${item.id}, 1)">+</button>
         </div>
         <div class="valor-item-comanda-detalhe">${formatarMoeda(item.subtotal)}</div>
-        <button class="btn-remover-item-comanda" onclick="window.removerItemComandaPainel(${item.id})">✕</button>
+        <button class="btn-remover-item-comanda" title="Cancelar item" onclick="window.removerItemComandaPainel(${item.id})">✕</button>
       </div>
     `).join('');
   }
@@ -221,6 +250,7 @@
   }
 
   function renderizarResultadosComanda(produtos) {
+    ultimosResultadosBusca = produtos;
     if (produtos.length === 0) {
       resultadosComanda.innerHTML = '';
       return;
@@ -228,7 +258,7 @@
 
     resultadosComanda.innerHTML = produtos.map(produto => `
       <div class="resultado-comanda-item" data-id="${produto.id}">
-        <strong>${produto.nome}</strong> — ${formatarMoeda(produto.preco_venda)}
+        <strong>${escaparHtml(produto.nome)}</strong> — ${formatarMoeda(produto.preco_venda)}
       </div>
     `).join('');
 
@@ -252,6 +282,7 @@
 
       if (resultado.sucesso) {
         carregarDetalhe(comandaSelecionadaId);
+        buscaProdutoComanda.focus();
       } else {
         mostrarFeedback(resultado.erro, 'erro');
       }
@@ -260,8 +291,111 @@
     }
   }
 
+  // Enter na busca: tenta código de barras exato; senão, se só há um resultado, adiciona ele
+  async function adicionarPorEnter() {
+    const termo = buscaProdutoComanda.value.trim();
+    if (!termo || !comandaSelecionadaId) return;
+    clearTimeout(buscaProdutoComanda.debounce);
+
+    try {
+      const porCodigo = await window.api.vendas.buscarProdutoPorCodigo(termo);
+      let produto = porCodigo.sucesso ? porCodigo.dados : null;
+
+      if (!produto) {
+        const busca = await window.api.vendas.buscarProdutos(termo);
+        if (busca.sucesso && busca.dados.length === 1) {
+          produto = busca.dados[0];
+        } else if (busca.sucesso && busca.dados.length > 1) {
+          renderizarResultadosComanda(busca.dados);
+          mostrarFeedback('Mais de um produto encontrado: clique no certo', 'erro');
+          return;
+        }
+      }
+
+      if (!produto) {
+        mostrarFeedback('Produto não encontrado', 'erro');
+        return;
+      }
+
+      buscaProdutoComanda.value = '';
+      resultadosComanda.innerHTML = '';
+      await adicionarItem(produto.id);
+    } catch (erro) {
+      mostrarFeedback('Erro ao buscar produto', 'erro');
+    }
+  }
+
+  async function alterarQuantidadeItem(itemId, delta) {
+    const item = itensAtuais.find(i => i.id === itemId);
+    if (item && delta < 0 && item.quantidade + delta <= 0) {
+      removerItem(itemId);
+      return;
+    }
+
+    try {
+      const resultado = await window.api.comandas.alterarQuantidade(itemId, delta);
+      if (resultado.sucesso) {
+        carregarDetalhe(comandaSelecionadaId);
+      } else {
+        mostrarFeedback(resultado.erro, 'erro');
+      }
+    } catch (erro) {
+      mostrarFeedback('Erro ao alterar quantidade', 'erro');
+    }
+  }
+
+  function mostrarFormAvulso() {
+    formAvulsoComanda.classList.remove('hidden');
+    descricaoAvulsoComanda.value = '';
+    valorAvulsoComanda.value = '';
+    quantidadeAvulsoComanda.value = '1';
+    descricaoAvulsoComanda.focus();
+  }
+
+  function esconderFormAvulso() {
+    formAvulsoComanda.classList.add('hidden');
+  }
+
+  async function confirmarAvulso() {
+    if (!comandaSelecionadaId) return;
+
+    const descricao = descricaoAvulsoComanda.value.trim();
+    const valor = parseFloat(valorAvulsoComanda.value);
+    const quantidade = parseFloat(quantidadeAvulsoComanda.value) || 1;
+
+    if (!descricao) {
+      mostrarFeedback('Informe a descrição do item', 'erro');
+      descricaoAvulsoComanda.focus();
+      return;
+    }
+    if (!(valor > 0)) {
+      mostrarFeedback('Informe um valor válido', 'erro');
+      valorAvulsoComanda.focus();
+      return;
+    }
+
+    try {
+      const resultado = await window.api.comandas.adicionarItem(comandaSelecionadaId, {
+        produto_id: null,
+        nome_produto: descricao,
+        preco_unitario: valor,
+        quantidade
+      });
+      if (resultado.sucesso) {
+        esconderFormAvulso();
+        carregarDetalhe(comandaSelecionadaId);
+      } else {
+        mostrarFeedback(resultado.erro, 'erro');
+      }
+    } catch (erro) {
+      mostrarFeedback('Erro ao adicionar item avulso', 'erro');
+    }
+  }
+
   async function removerItem(itemId) {
-    if (!confirm('Remover este item?')) return;
+    const item = itensAtuais.find(i => i.id === itemId);
+    const descricao = item ? `${item.quantidade}× ${item.nome_produto}` : 'este item';
+    if (!confirm(`Cancelar ${descricao} da comanda?`)) return;
 
     try {
       const resultado = await window.api.comandas.removerItem(itemId);
@@ -375,7 +509,10 @@
 
   async function cancelarComanda() {
     if (!comandaSelecionadaId) return;
-    if (!confirm('Cancelar esta comanda?')) return;
+    const resumo = itensAtuais.length > 0
+      ? `\n\n${itensAtuais.length} ite${itensAtuais.length !== 1 ? 'ns' : 'm'} • ${formatarMoeda(totalParcialAtual)} não serão cobrados.`
+      : '';
+    if (!confirm(`Cancelar a comanda "${tituloComanda.textContent}"?${resumo}`)) return;
 
     try {
       const resultado = await window.api.comandas.cancelar(comandaSelecionadaId);
@@ -409,6 +546,23 @@
       buscaProdutoComanda.debounce = setTimeout(buscarProdutosComanda, 300);
     });
 
+    buscaProdutoComanda.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Enter') {
+        evento.preventDefault();
+        adicionarPorEnter();
+      }
+    });
+
+    btnAvulsoComanda.addEventListener('click', mostrarFormAvulso);
+    btnConfirmarAvulsoComanda.addEventListener('click', confirmarAvulso);
+    btnCancelarAvulsoComanda.addEventListener('click', esconderFormAvulso);
+    [descricaoAvulsoComanda, valorAvulsoComanda, quantidadeAvulsoComanda].forEach(campo => {
+      campo.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter') confirmarAvulso();
+        if (evento.key === 'Escape') esconderFormAvulso();
+      });
+    });
+
     botoesPagComanda.forEach(btn => {
       btn.addEventListener('click', () => selecionarFormaPagamento(btn.dataset.forma));
     });
@@ -422,6 +576,12 @@
 
   window.selecionarComandaPainel = selecionarComanda;
   window.removerItemComandaPainel = removerItem;
+  window.alterarQtdItemComandaPainel = alterarQuantidadeItem;
+
+  // Mantém o "aberta há X min" atualizado enquanto o painel está visível
+  setInterval(() => {
+    if (painelComandas.classList.contains('aberto')) carregarComandasAbertas();
+  }, 60000);
 
   registrarEventListeners();
 })();

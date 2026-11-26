@@ -123,14 +123,7 @@
   }
 
   function traduzirFormaPagamento(forma) {
-    const traducoes = {
-      dinheiro: 'Dinheiro',
-      pix: 'PIX',
-      debito: 'Débito',
-      credito: 'Crédito',
-      fiado: 'Fiado'
-    };
-    return traducoes[forma] || forma;
+    return nomeFormaPagamento(forma);
   }
 
   function renderFormasPagamento(lista) {
@@ -165,7 +158,7 @@
     listaProdutosVendidos.innerHTML = lista.map((item, indice) => `
       <div class="item-lista-relatorio">
         <span class="nome-item-lista">
-          <strong>#${indice + 1}</strong> ${item.nome_produto}
+          <strong>#${indice + 1}</strong> ${escaparHtml(item.nome_produto)}
         </span>
         <div class="valores-item-lista">
           <div class="valor-item-lista">
@@ -205,8 +198,8 @@
             <div class="item-reposicao">
               <span class="tag-reposicao acabou">Esgotado</span>
               <div class="info-reposicao">
-                <div class="nome-reposicao">${item.nome}</div>
-                <div class="estoque-reposicao">${item.categoria || 'Sem categoria'} • ${item.unidade}</div>
+                <div class="nome-reposicao">${escaparHtml(item.nome)}</div>
+                <div class="estoque-reposicao">${escaparHtml(item.categoria || 'Sem categoria')} • ${escaparHtml(item.unidade)}</div>
               </div>
             </div>
           `).join('')}
@@ -222,8 +215,8 @@
             <div class="item-reposicao">
               <span class="tag-reposicao acabando">Baixo</span>
               <div class="info-reposicao">
-                <div class="nome-reposicao">${item.nome}</div>
-                <div class="estoque-reposicao">${item.estoque_atual} / ${item.estoque_minimo} ${item.unidade} • ${item.categoria || 'Sem categoria'}</div>
+                <div class="nome-reposicao">${escaparHtml(item.nome)}</div>
+                <div class="estoque-reposicao">${item.estoque_atual} / ${item.estoque_minimo} ${escaparHtml(item.unidade)} • ${escaparHtml(item.categoria || 'Sem categoria')}</div>
               </div>
             </div>
           `).join('')}

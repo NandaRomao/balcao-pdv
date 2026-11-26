@@ -58,7 +58,7 @@
 
   function formatarDataHora(dataString) {
     if (!dataString) return '';
-    const data = new Date(dataString);
+    const data = dataDoBanco(dataString);
     return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' +
       data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   }
@@ -98,7 +98,7 @@
 
     gridClientes.innerHTML = clientes.map(cliente => {
       const foto = cliente.foto_path
-        ? `<img src="${cliente.foto_path}" class="foto-cliente" alt="">`
+        ? `<img src="${escaparHtml(cliente.foto_path)}" class="foto-cliente" alt="">`
         : `<div class="foto-cliente-placeholder">👤</div>`;
 
       const devendo = cliente.saldo_devedor > 0;
@@ -108,8 +108,8 @@
         <div class="card-cliente" onclick="window.abrirExtratoCliente(${cliente.id})">
           ${devendo ? '<span class="badge-devendo">DEVENDO</span>' : ''}
           ${foto}
-          <div class="nome-cliente">${cliente.nome}</div>
-          ${cliente.telefone ? `<div class="telefone-cliente">${cliente.telefone}</div>` : ''}
+          <div class="nome-cliente">${escaparHtml(cliente.nome)}</div>
+          ${cliente.telefone ? `<div class="telefone-cliente">${escaparHtml(cliente.telefone)}</div>` : ''}
           <div class="saldo-cliente ${saldoClasse}">${formatarMoeda(cliente.saldo_devedor)}</div>
           <div class="acoes-cliente">
             <button class="btn-acao primario" onclick="event.stopPropagation(); window.editarCliente(${cliente.id})">Editar</button>
@@ -252,7 +252,7 @@
       return `
         <div class="item-extrato">
           <span class="data-extrato">${formatarDataHora(lanc.criado_em)}</span>
-          <span class="descricao-extrato">${lanc.descricao || 'Pagamento'}</span>
+          <span class="descricao-extrato">${escaparHtml(lanc.descricao || 'Pagamento')}</span>
           <span class="valor-extrato ${classeValor}">${prefixo} ${formatarMoeda(lanc.valor)}</span>
           <button class="btn-remover-lancamento" onclick="window.removerLancamentoPainel(${lanc.id})">✕</button>
         </div>
@@ -314,7 +314,7 @@
   function renderizarResultadosFiado(produtos) {
     resultadosFiado.innerHTML = produtos.map(produto => `
       <div class="resultado-comanda-item" data-id="${produto.id}">
-        <strong>${produto.nome}</strong> — ${formatarMoeda(produto.preco_venda)}
+        <strong>${escaparHtml(produto.nome)}</strong> — ${formatarMoeda(produto.preco_venda)}
       </div>
     `).join('');
 

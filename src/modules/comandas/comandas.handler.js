@@ -1,4 +1,5 @@
 const { db } = require('../../database/db');
+const { FORMAS_PAGAMENTO, arredondar } = require('../vendas/vendas.handler');
 
 function listarComandasAbertas() {
   try {
@@ -82,19 +83,52 @@ function buscarDetalheComanda(id) {
   }
 }
 
+function buscarComandaAberta(comandaId) {
+  const comanda = db.prepare("SELECT id FROM comandas WHERE id = ? AND status = 'aberta'").get(comandaId);
+  if (!comanda) {
+    throw new Error('Comanda não encontrada ou já fechada');
+  }
+  return comanda;
+}
+
 function adicionarItemComanda(comandaId, item) {
-  try {
+  const transacao = db.transaction(() => {
+    buscarComandaAberta(comandaId);
+
+    const quantidade = Number(item.quantidade);
+    if (!(quantidade > 0)) {
+      throw new Error('Quantidade inválida');
+    }
+
+    // Item avulso: sem produto cadastrado, preço digitado, sem controle de estoque
+    if (!item.produto_id) {
+      const descricao = String(item.nome_produto || '').trim();
+      const preco = Number(item.preco_unitario);
+      if (!descricao) {
+        throw new Error('Informe a descrição do item avulso');
+      }
+      if (!(preco > 0)) {
+        throw new Error('Informe um valor válido para o item avulso');
+      }
+
+      db.prepare(`
+        INSERT INTO comanda_itens
+        (comanda_id, produto_id, nome_produto, preco_unitario, quantidade, subtotal)
+        VALUES (?, NULL, ?, ?, ?, ?)
+      `).run(comandaId, descricao, preco, quantidade, arredondar(preco * quantidade));
+      return;
+    }
+
     const produto = db.prepare(`
       SELECT nome, preco_venda, estoque_atual, ativo
       FROM produtos WHERE id = ?
     `).get(item.produto_id);
 
     if (!produto) {
-      return { sucesso: false, erro: 'Produto não encontrado' };
+      throw new Error('Produto não encontrado');
     }
-
     if (!produto.ativo) {
-      return { sucesso: false, erro: 'Produto inativo' };
+      throw new Error('Produto inativo');
     }
 
     const itemExistente = db.prepare(`
@@ -103,16 +137,13 @@ function adicionarItemComanda(comandaId, item) {
     `).get(comandaId, item.produto_id);
 
     const quantidadeAtual = itemExistente ? itemExistente.quantidade : 0;
-    const quantidadeFinal = quantidadeAtual + item.quantidade;
+    const quantidadeFinal = quantidadeAtual + quantidade;
 
     if (quantidadeFinal > produto.estoque_atual) {
-      return {
-        sucesso: false,
-        erro: `Estoque insuficiente. Disponível: ${produto.estoque_atual}, já na comanda: ${quantidadeAtual}`
-      };
+      throw new Error(`Estoque insuficiente. Disponível: ${produto.estoque_atual}, já na comanda: ${quantidadeAtual}`);
     }
 
-    const subtotal = quantidadeFinal * produto.preco_venda;
+    const subtotal = arredondar(quantidadeFinal * produto.preco_venda);
 
     if (itemExistente) {
       db.prepare(`
@@ -125,9 +156,12 @@ function adicionarItemComanda(comandaId, item) {
         INSERT INTO comanda_itens
         (comanda_id, produto_id, nome_produto, preco_unitario, quantidade, subtotal)
         VALUES (?, ?, ?, ?, ?, ?)
-      `).run(comandaId, item.produto_id, produto.nome, produto.preco_venda, item.quantidade, subtotal);
+      `).run(comandaId, item.produto_id, produto.nome, produto.preco_venda, quantidade, subtotal);
     }
+  });
 
+  try {
+    transacao();
     return buscarDetalheComanda(comandaId);
   } catch (erro) {
     return { sucesso: false, erro: erro.message };
@@ -136,8 +170,49 @@ function adicionarItemComanda(comandaId, item) {
 
 function removerItemComanda(itemId) {
   try {
+    const item = db.prepare('SELECT comanda_id FROM comanda_itens WHERE id = ?').get(itemId);
+    if (!item) {
+      return { sucesso: false, erro: 'Item não encontrado' };
+    }
+    buscarComandaAberta(item.comanda_id);
+
     db.prepare('DELETE FROM comanda_itens WHERE id = ?').run(itemId);
     return { sucesso: true };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+// Soma (delta > 0) ou tira (delta < 0) unidades de um item. Chegando a zero, o item sai da comanda.
+function alterarQuantidadeItem(itemId, delta) {
+  const transacao = db.transaction(() => {
+    const item = db.prepare('SELECT * FROM comanda_itens WHERE id = ?').get(itemId);
+    if (!item) {
+      throw new Error('Item não encontrado');
+    }
+    buscarComandaAberta(item.comanda_id);
+
+    const novaQuantidade = item.quantidade + Number(delta);
+    if (novaQuantidade <= 0) {
+      db.prepare('DELETE FROM comanda_itens WHERE id = ?').run(itemId);
+      return item.comanda_id;
+    }
+
+    if (item.produto_id && delta > 0) {
+      const produto = db.prepare('SELECT estoque_atual FROM produtos WHERE id = ?').get(item.produto_id);
+      if (!produto || novaQuantidade > produto.estoque_atual) {
+        throw new Error(`Estoque insuficiente. Disponível: ${produto ? produto.estoque_atual : 0}`);
+      }
+    }
+
+    db.prepare('UPDATE comanda_itens SET quantidade = ?, subtotal = ? WHERE id = ?')
+      .run(novaQuantidade, arredondar(novaQuantidade * item.preco_unitario), itemId);
+    return item.comanda_id;
+  });
+
+  try {
+    const comandaId = transacao();
+    return buscarDetalheComanda(comandaId);
   } catch (erro) {
     return { sucesso: false, erro: erro.message };
   }
@@ -176,7 +251,12 @@ function fecharComanda(comandaId, dadosPagamento) {
       throw new Error('Comanda sem itens — adicione produtos antes de fechar');
     }
 
+    if (!FORMAS_PAGAMENTO.includes(dadosPagamento.forma_pagamento)) {
+      throw new Error('Forma de pagamento inválida');
+    }
+
     for (const item of itens) {
+      if (!item.produto_id) continue;
       const produto = db.prepare('SELECT estoque_atual FROM produtos WHERE id = ?').get(item.produto_id);
       if (!produto) {
         throw new Error(`Produto ID ${item.produto_id} não encontrado`);
@@ -186,22 +266,31 @@ function fecharComanda(comandaId, dadosPagamento) {
       }
     }
 
-    const subtotal = itens.reduce((soma, item) => soma + item.subtotal, 0);
-    const desconto = dadosPagamento.desconto || 0;
-    const total = Math.max(0, subtotal - desconto);
-    const valorPago = dadosPagamento.forma_pagamento === 'dinheiro'
-      ? (dadosPagamento.valor_pago || 0)
-      : total;
-    const troco = dadosPagamento.forma_pagamento === 'dinheiro'
-      ? Math.max(0, valorPago - total)
-      : 0;
+    const subtotal = arredondar(itens.reduce((soma, item) => soma + item.subtotal, 0));
+    const desconto = arredondar(Number(dadosPagamento.desconto) || 0);
+    if (desconto < 0 || desconto > subtotal) {
+      throw new Error('Desconto inválido: deve estar entre zero e o subtotal da comanda');
+    }
+    const total = arredondar(subtotal - desconto);
+
+    let valorPago = total;
+    let troco = 0;
+    if (dadosPagamento.forma_pagamento === 'dinheiro') {
+      valorPago = arredondar(Number(dadosPagamento.valor_pago) || 0);
+      if (valorPago < total) {
+        throw new Error('Valor recebido é menor que o total da comanda');
+      }
+      troco = arredondar(valorPago - total);
+    }
 
     const resultadoVenda = inserirVenda.run(subtotal, desconto, total, dadosPagamento.forma_pagamento, valorPago, troco);
     const vendaId = resultadoVenda.lastInsertRowid;
 
     for (const item of itens) {
       inserirItemVenda.run(vendaId, item.produto_id, item.nome_produto, item.preco_unitario, item.quantidade, item.subtotal);
-      baixarEstoque.run(item.quantidade, item.produto_id);
+      if (item.produto_id) {
+        baixarEstoque.run(item.quantidade, item.produto_id);
+      }
     }
 
     atualizarComanda.run(vendaId, comandaId);
@@ -219,11 +308,15 @@ function fecharComanda(comandaId, dadosPagamento) {
 
 function cancelarComanda(comandaId) {
   try {
-    db.prepare(`
+    const resultado = db.prepare(`
       UPDATE comandas
       SET status = 'cancelada', fechada_em = CURRENT_TIMESTAMP
-      WHERE id = ?
+      WHERE id = ? AND status = 'aberta'
     `).run(comandaId);
+
+    if (resultado.changes === 0) {
+      return { sucesso: false, erro: 'Comanda não encontrada ou já fechada' };
+    }
 
     return { sucesso: true };
   } catch (erro) {
@@ -237,6 +330,7 @@ module.exports = {
   buscarDetalheComanda,
   adicionarItemComanda,
   removerItemComanda,
+  alterarQuantidadeItem,
   fecharComanda,
   cancelarComanda
 };

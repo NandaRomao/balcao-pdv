@@ -545,3 +545,7 @@
   border-color: var(--cor-secundaria);
   color: var(--cor-secundaria);
 }
+/* 5 formas de pagamento em grade de 2: a última ocupa a linha inteira */
+.btn-pagamento:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}

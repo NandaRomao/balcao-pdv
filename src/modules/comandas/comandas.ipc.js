@@ -5,6 +5,7 @@ const {
   buscarDetalheComanda,
   adicionarItemComanda,
   removerItemComanda,
+  alterarQuantidadeItem,
   fecharComanda,
   cancelarComanda
 } = require('./comandas.handler');
@@ -28,6 +29,10 @@ function registrarComandas() {
 
   ipcMain.handle('comandas:remover-item', async (evento, itemId) => {
     return removerItemComanda(itemId);
+  });
+
+  ipcMain.handle('comandas:alterar-quantidade', async (evento, itemId, delta) => {
+    return alterarQuantidadeItem(itemId, delta);
   });
 
   ipcMain.handle('comandas:fechar', async (evento, comandaId, dadosPagamento) => {
